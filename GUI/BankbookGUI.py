@@ -1,5 +1,5 @@
 import customtkinter as ctk
-
+import Create_deposit_slip_GUI
 
 class BankbookGUI(ctk.CTk):
     def __init__(self):
@@ -65,7 +65,7 @@ class BankbookGUI(ctk.CTk):
         self.clear_right_frame()
         
         # Title
-        title_label = ctk.CTkLabel(self.right_frame, text="Sổ Tiết Kiệm", font=ctk.CTkFont(size=20, weight="bold"))
+        title_label = ctk.CTkLabel(self.right_frame, text="Mở Sổ Tiết Kiệm", font=ctk.CTkFont(size=20, weight="bold"))
         title_label.pack(pady=20)
 
         # Create main form frame
@@ -135,8 +135,7 @@ class BankbookGUI(ctk.CTk):
 
     def create_deposit_slip(self):
         self.clear_right_frame()
-        register_label = ctk.CTkLabel(self.right_frame, text="Đây là trang lập phiếu gửi tiền.")
-        register_label.pack(pady=20)
+        Create_deposit_slip_GUI.Create_deposit_slip_GUI(self.right_frame)
 
     def create_withdrawal_slip(self):
         self.clear_right_frame()
