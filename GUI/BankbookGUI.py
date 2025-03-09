@@ -5,7 +5,7 @@ class BankbookGUI(ctk.CTk):
     def __init__(self):
         super().__init__()
 
-        self.title("BankBook ")
+        self.title("BankBook Management ")
         self.geometry("800x600")
 
         # Cấu hình grid
@@ -63,8 +63,75 @@ class BankbookGUI(ctk.CTk):
 
     def create_bankbook(self):
         self.clear_right_frame()
-        info_label = ctk.CTkLabel(self.right_frame, text="Đây là trang mở sổ tiết kiệm.")
-        info_label.pack(pady=20)
+        
+        # Title
+        title_label = ctk.CTkLabel(self.right_frame, text="Sổ Tiết Kiệm", font=ctk.CTkFont(size=20, weight="bold"))
+        title_label.pack(pady=20)
+
+        # Create main form frame
+        form_frame = ctk.CTkFrame(self.right_frame)
+        form_frame.pack(pady=20, padx=20, fill="x")
+
+        # Row 1
+        row1_frame = ctk.CTkFrame(form_frame)
+        row1_frame.pack(fill="x", padx=10, pady=5)
+        
+        maso_label = ctk.CTkLabel(row1_frame, text="Mã số:")
+        maso_label.pack(side="left", padx=5)
+        maso_entry = ctk.CTkEntry(row1_frame)
+        maso_entry.pack(side="left", expand=True, fill="x", padx=5)
+        
+        loaitk_label = ctk.CTkLabel(row1_frame, text="Loại tiết kiệm:")
+        loaitk_label.pack(side="left", padx=5)
+        loaitk_entry = ctk.CTkEntry(row1_frame)
+        loaitk_entry.pack(side="left", expand=True, fill="x", padx=5)
+
+        # Row 2
+        row2_frame = ctk.CTkFrame(form_frame)
+        row2_frame.pack(fill="x", padx=10, pady=5)
+        
+        khachhang_label = ctk.CTkLabel(row2_frame, text="Khách hàng:")
+        khachhang_label.pack(side="left", padx=5)
+        khachhang_entry = ctk.CTkEntry(row2_frame)
+        khachhang_entry.pack(side="left", expand=True, fill="x", padx=5)
+        
+        cmnd_label = ctk.CTkLabel(row2_frame, text="CMND:")
+        cmnd_label.pack(side="left", padx=5)
+        cmnd_entry = ctk.CTkEntry(row2_frame)
+        cmnd_entry.pack(side="left", expand=True, fill="x", padx=5)
+
+        # Row 3
+        row3_frame = ctk.CTkFrame(form_frame)
+        row3_frame.pack(fill="x", padx=10, pady=5)
+        
+        diachi_label = ctk.CTkLabel(row3_frame, text="Địa chỉ:")
+        diachi_label.pack(side="left", padx=5)
+        diachi_entry = ctk.CTkEntry(row3_frame)
+        diachi_entry.pack(side="left", expand=True, fill="x", padx=5)
+        
+        ngaymo_label = ctk.CTkLabel(row3_frame, text="Ngày mở sổ:")
+        ngaymo_label.pack(side="left", padx=5)
+        ngaymo_entry = ctk.CTkEntry(row3_frame)
+        ngaymo_entry.pack(side="left", expand=True, fill="x", padx=5)
+
+        # Row 4
+        row4_frame = ctk.CTkFrame(form_frame)
+        row4_frame.pack(fill="x", padx=10, pady=5)
+        
+        sotiengoi_label = ctk.CTkLabel(row4_frame, text="Số tiền gởi:")
+        sotiengoi_label.pack(side="left", padx=5)
+        sotiengoi_entry = ctk.CTkEntry(row4_frame)
+        sotiengoi_entry.pack(side="left", expand=True, fill="x", padx=5)
+
+        # Buttons frame
+        button_frame = ctk.CTkFrame(self.right_frame)
+        button_frame.pack(pady=20)
+        
+        save_button = ctk.CTkButton(button_frame, text="Lưu")
+        save_button.pack(side="left", padx=10)
+        
+        cancel_button = ctk.CTkButton(button_frame, text="Hủy")
+        cancel_button.pack(side="left", padx=10)
 
     def create_deposit_slip(self):
         self.clear_right_frame()
