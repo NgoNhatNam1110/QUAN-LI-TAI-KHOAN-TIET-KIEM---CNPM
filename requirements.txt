@@ -1,0 +1,5 @@
+Pillow
+tk
+customtkinter
+cryptography
+pandas
