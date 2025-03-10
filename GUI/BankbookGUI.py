@@ -1,5 +1,7 @@
 import customtkinter as ctk
 import Create_deposit_slip_GUI
+import Create_withdrawal_slip_GUI
+import Lookup_Bankbook_GUI
 
 class BankbookGUI(ctk.CTk):
     def __init__(self):
@@ -8,19 +10,19 @@ class BankbookGUI(ctk.CTk):
         self.title("BankBook Management ")
         self.geometry("800x600")
 
-        # Cấu hình grid
+        # Configure grid
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
 
-        # Khung bên trái
+        # Left frame
         self.left_frame = ctk.CTkFrame(self, width=200, corner_radius=0)
         self.left_frame.grid(row=0, column=0, sticky="nsew")
         
         ctk.set_appearance_mode("light")
         ctk.set_default_color_theme("blue")
 
-        # Thông tin sinh viên
-        self.account_detail_label = ctk.CTkLabel(self.left_frame, text="Thông tin tài khoản :", font=ctk.CTkFont(size=18, weight="bold"))
+        # Account information
+        self.account_detail_label = ctk.CTkLabel(self.left_frame, text="Account Information :", font=ctk.CTkFont(size=18, weight="bold"))
         self.account_detail_label.pack(pady=20)
 
         self.account_label = ctk.CTkLabel(self.left_frame, text="Tài khoản : load tài khoản")
@@ -49,15 +51,15 @@ class BankbookGUI(ctk.CTk):
         self.change_rules_button = ctk.CTkButton(self.left_frame, text="Thay đổi qui định", command=self.change_rules)
         self.change_rules_button.pack(pady=10)
 
-        # Khung bên phải
+        # Right frame
         self.right_frame = ctk.CTkFrame(self, corner_radius=0)
         self.right_frame.grid(row=0, column=1, sticky="nsew")
 
-        # Hiển thị thông tin mặc định
+        # Display default information
         self.create_bankbook()
 
     def clear_right_frame(self):
-        # Xóa tất cả widget trong khung bên phải
+        # Clear all widgets in the right frame
         for widget in self.right_frame.winfo_children():
             widget.destroy()
 
@@ -139,23 +141,19 @@ class BankbookGUI(ctk.CTk):
 
     def create_withdrawal_slip(self):
         self.clear_right_frame()
-        score_label = ctk.CTkLabel(self.right_frame, text="Đây là trang lập phiếu rút tiền.")
-        score_label.pack(pady=20)
+        Create_withdrawal_slip_GUI.Create_withdrawal_slip_GUI(self.right_frame)
     
     def lookup_bankbook(self):
         self.clear_right_frame()
-        score_label = ctk.CTkLabel(self.right_frame, text="Đây là trang tra cứu sổ.")
-        score_label.pack(pady=20)
+        Lookup_Bankbook_GUI.Lookup_Bankbook_GUI(self.right_frame)
     
     def prepare_monthly_report(self):
         self.clear_right_frame()
-        score_label = ctk.CTkLabel(self.right_frame, text="Đây là trang lập báo cáo tháng.")
-        score_label.pack(pady=20)
+        # Prepare_monthly_report_GUI.Prepare_monthly_report_GUI(self.right_frame)
     
     def change_rules(self):
         self.clear_right_frame()
-        score_label = ctk.CTkLabel(self.right_frame, text="Đây là trang thay đổi qui định.")
-        score_label.pack(pady=20)
+        # Change_rules_GUI.Change_rules_GUI(self.right_frame)
 
 # if __name__ == "__main__":
 #     app = BankbookGUI()
