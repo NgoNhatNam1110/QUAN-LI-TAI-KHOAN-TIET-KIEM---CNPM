@@ -1,0 +1,43 @@
+CREATE TABLE ThamSo (
+    maQuyDinh TEXT PRIMARY KEY,
+    loaiTietKiem TEXT NOT NULL,
+    tienGuiToiThieu REAL NOT NULL,
+    kyHan INTEGER NOT NULL,
+    laiSuat REAL NOT NULL,
+    quyDinhKhac TEXT,
+    FOREIGN KEY (loaiTietKiem) REFERENCES LoaiTietKiem(loaiTietKiem)
+);
+CREATE TABLE LoaiGiaoDich (
+    loaiGiaoDich TEXT PRIMARY KEY,
+    moTa TEXT NOT NULL
+);
+CREATE TABLE GiaoDich (
+    maGiaoDich TEXT PRIMARY KEY,
+    maSo TEXT NOT NULL,
+    loaiGiaoDich TEXT NOT NULL,
+    soTien REAL NOT NULL,
+    ngayGiaoDich TEXT NOT NULL, -- Stored as ISO datetime (YYYY-MM-DD HH:MM:SS)
+    FOREIGN KEY (maSo) REFERENCES SoTietKiem(maSo),
+    FOREIGN KEY (loaiGiaoDich) REFERENCES LoaiGiaoDich(loaiGiaoDich)
+);
+CREATE TABLE LoaiTietKiem (
+    loaiTietKiem TEXT PRIMARY KEY,
+    kyHan INTEGER NOT NULL,
+    laiSuat REAL NOT NULL
+);
+CREATE TABLE SoTietKiem (
+    maSo TEXT PRIMARY KEY,
+    maKhachHang TEXT NOT NULL,
+    loaiTietKiem TEXT NOT NULL,
+    soTienGui REAL NOT NULL,
+    ngayMoSo TEXT NOT NULL, -- Stored as ISO date (YYYY-MM-DD)
+    soDu REAL NOT NULL,
+    FOREIGN KEY (maKhachHang) REFERENCES KhachHang(maKhachHang),
+    FOREIGN KEY (loaiTietKiem) REFERENCES LoaiTietKiem(loaiTietKiem)
+);
+CREATE TABLE KhachHang (
+    maKhachHang TEXT PRIMARY KEY,
+    hoTen TEXT NOT NULL,
+    CMND TEXT UNIQUE NOT NULL,
+    diaChi TEXT
+);
