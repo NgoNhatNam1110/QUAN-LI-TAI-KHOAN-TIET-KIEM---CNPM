@@ -1,6 +1,9 @@
 import customtkinter as ctk
 from BankbookGUI import BankbookGUI
+<<<<<<< HEAD
 from utils.db_utils import DatabaseConnection  # Import the database connection utility
+=======
+>>>>>>> ddd67fe (implemented basic login functionality & created actual sqlite database via dbBrowser)
 
 class LoginGUI:
     def __init__(self):
@@ -40,6 +43,7 @@ class LoginGUI:
         username = self.username_entry.get()  # Get the entered username
         password = self.password_entry.get()  # Get the entered password
 
+<<<<<<< HEAD
         try:
             # Connect to the database
             connection = self.db.connect()
@@ -64,6 +68,22 @@ class LoginGUI:
 
         except Exception as e:
             print(f"Error during login event: {e}")
+=======
+        #Valid credentials
+        valid_username = "admin"
+        valid_password = "admin"
+
+        if username == valid_username and password == valid_password:
+            print("Login successful")
+            self.window.destroy()  # Close the login window
+            bankbook_gui = BankbookGUI()  # Open the main application window
+            bankbook_gui.mainloop()
+        else:
+            print("Invalid credentials")
+            # Optionally, show an error message to the user
+            error_label = ctk.CTkLabel(master=self.frame, text="Invalid username or password", text_color="red")
+            error_label.pack(pady=5)
+>>>>>>> ddd67fe (implemented basic login functionality & created actual sqlite database via dbBrowser)
         
     def run(self):
         self.window.mainloop()
