@@ -32,7 +32,7 @@ class LoginGUI:
         # Login button
         self.login_button = ctk.CTkButton(master=self.frame, text="Login", command=self.login_event)
         self.login_button.pack(pady=12, padx=10)
-        
+
     def login_event(self):
         username = self.username_entry.get()  # Get the entered username
         password = self.password_entry.get()  # Get the entered password
@@ -42,13 +42,14 @@ class LoginGUI:
         cursor = conn.cursor()
 
         # Query the database for the entered credentials
-        cursor.execute("SELECT * FROM Admin WHERE NAME = ? AND PASSWORD = ?", (username, password))
+        cursor.execute("SELECT ID, NAME, PASSWORD FROM Admin WHERE NAME = ? AND PASSWORD = ?", (username, password))
         result = cursor.fetchone()
 
         if result:  # If a matching record is found
+            user_id, username, password = result  # Extract ID, username, and password
             print("Login successful")
             self.window.destroy()  # Close the login window
-            bankbook_gui = BankbookGUI()  # Open the main application window
+            bankbook_gui = BankbookGUI(user_id, username, password)  # Pass ID, username, and password to BankbookGUI
             bankbook_gui.mainloop()
         else:
             print("Invalid credentials")
