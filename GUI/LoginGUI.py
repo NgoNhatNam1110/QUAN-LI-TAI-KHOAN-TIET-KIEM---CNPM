@@ -1,12 +1,9 @@
 import customtkinter as ctk
 from BankbookGUI import BankbookGUI
-from BUS.Login_BUS import Login_BUS  # Import the business layer
+import sqlite3  # Import sqlite3 for database operations
 
 class LoginGUI:
     def __init__(self):
-        # Initialize the business layer
-        self.login_bus = Login_BUS()
-        
         # Configure appearance
         ctk.set_appearance_mode("dark")
         ctk.set_default_color_theme("blue")
@@ -40,24 +37,33 @@ class LoginGUI:
         username = self.username_entry.get()  # Get the entered username
         password = self.password_entry.get()  # Get the entered password
 
-        try:
-            # Call the business layer to validate login
-            result = self.login_bus.validate_login(username, password)
+        # Connect to the database
+        conn = sqlite3.connect("db.db")
+        cursor = conn.cursor()
 
-            if result:  # If a matching record is found
-                user_id, username, password = result  # Extract ID, username, and password
-                print("Login successful")
-                self.window.destroy()  # Close the login window
-                bankbook_gui = BankbookGUI(user_id, username, password)  # Pass ID, username, and password to BankbookGUI
-                bankbook_gui.mainloop()
-            else:
-                print("Invalid credentials")
-                # Optionally, show an error message to the user
-                error_label = ctk.CTkLabel(master=self.frame, text="Invalid username or password", text_color="red")
-                error_label.pack(pady=5)
+        # Query the database for the entered credentials
+        cursor.execute("SELECT ID, NAME, PASSWORD FROM Admin WHERE NAME = ? AND PASSWORD = ?", (username, password))
+        result = cursor.fetchone()
 
-        except Exception as e:
-            print(f"Error during login event: {e}")
+        if result:  # If a matching record is found
+            user_id, username, password = result  # Extract ID, username, and password
+            print("Login successful")
+            self.window.destroy()  # Close the login window
+            bankbook_gui = BankbookGUI(user_id, username, password)  # Pass ID, username, and password to BankbookGUI
+            bankbook_gui.mainloop()
+        else:
+            print("Invalid credentials")
+            # Optionally, show an error message to the user
+            error_label = ctk.CTkLabel(master=self.frame, text="Invalid username or password", text_color="red")
+            error_label.pack(pady=5)
+
+        # Close the database connection
+        conn.close()
         
     def run(self):
         self.window.mainloop()
+
+# Create and run the application
+# if __name__ == "__main__":
+#     app = LoginGUI()
+#     app.run()
