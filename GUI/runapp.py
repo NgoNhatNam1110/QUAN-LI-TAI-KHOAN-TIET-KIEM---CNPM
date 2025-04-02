@@ -1,6 +1,6 @@
 import BankbookGUI # test bankbook ui
-import LoginGUI
+from LoginGUI import LoginGUI
 if __name__ == "__main__" : 
-    # app = LoginGUI.LoginGUI() 
-    app = BankbookGUI.BankbookGUI() #test bankbook ui
-    app.mainloop()
+    app = LoginGUI()
+    # app = BankbookGUI.BankbookGUI() #test bankbook ui
+    app.run()
