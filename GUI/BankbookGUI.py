@@ -4,8 +4,12 @@ import Create_withdrawal_slip_GUI
 import Lookup_Bankbook_GUI
 import Prepare_monthly_report_GUI
 class BankbookGUI(ctk.CTk):
-    def __init__(self):
+    def __init__(self, user_id, username, password):
         super().__init__()
+
+        self.user_id = user_id  # Store the user ID
+        self.username = username  # Store the username
+        self.password = password  # Store the password
 
         self.title("BankBook Management ")
         self.geometry("800x600")
@@ -25,12 +29,11 @@ class BankbookGUI(ctk.CTk):
         self.account_detail_label = ctk.CTkLabel(self.left_frame, text="Account Information :", font=ctk.CTkFont(size=18, weight="bold"))
         self.account_detail_label.pack(pady=20)
 
-        self.account_label = ctk.CTkLabel(self.left_frame, text="Tài khoản : load tài khoản")
+        self.account_label = ctk.CTkLabel(self.left_frame, text=f"Tài khoản : {self.username}")
         self.account_label.pack(pady=5)
 
-        self.id_account_label = ctk.CTkLabel(self.left_frame, text="ID : load id")
+        self.id_account_label = ctk.CTkLabel(self.left_frame, text=f"ID : {self.user_id}")
         self.id_account_label.pack(pady=5)
-
 
         # Các nút chức năng
         self.create_bankbook_button = ctk.CTkButton(self.left_frame, text="Mở sổ tiết kiệm", command=self.create_bankbook)
@@ -80,13 +83,13 @@ class BankbookGUI(ctk.CTk):
         
         maso_label = ctk.CTkLabel(row1_frame, text="Mã số:")
         maso_label.pack(side="left", padx=5)
-        maso_entry = ctk.CTkEntry(row1_frame)
-        maso_entry.pack(side="left", expand=True, fill="x", padx=5)
+        self.maso_entry = ctk.CTkEntry(row1_frame)  # Store as instance variable
+        self.maso_entry.pack(side="left", expand=True, fill="x", padx=5)
         
         loaitk_label = ctk.CTkLabel(row1_frame, text="Loại tiết kiệm:")
         loaitk_label.pack(side="left", padx=5)
-        loaitk_entry = ctk.CTkEntry(row1_frame)
-        loaitk_entry.pack(side="left", expand=True, fill="x", padx=5)
+        self.loaitk_entry = ctk.CTkEntry(row1_frame)  # Store as instance variable
+        self.loaitk_entry.pack(side="left", expand=True, fill="x", padx=5)
 
         # Row 2
         row2_frame = ctk.CTkFrame(form_frame)
@@ -94,13 +97,13 @@ class BankbookGUI(ctk.CTk):
         
         khachhang_label = ctk.CTkLabel(row2_frame, text="Khách hàng:")
         khachhang_label.pack(side="left", padx=5)
-        khachhang_entry = ctk.CTkEntry(row2_frame)
-        khachhang_entry.pack(side="left", expand=True, fill="x", padx=5)
+        self.khachhang_entry = ctk.CTkEntry(row2_frame)  # Store as instance variable
+        self.khachhang_entry.pack(side="left", expand=True, fill="x", padx=5)
         
         cmnd_label = ctk.CTkLabel(row2_frame, text="CMND:")
         cmnd_label.pack(side="left", padx=5)
-        cmnd_entry = ctk.CTkEntry(row2_frame)
-        cmnd_entry.pack(side="left", expand=True, fill="x", padx=5)
+        self.cmnd_entry = ctk.CTkEntry(row2_frame)  # Store as instance variable
+        self.cmnd_entry.pack(side="left", expand=True, fill="x", padx=5)
 
         # Row 3
         row3_frame = ctk.CTkFrame(form_frame)
@@ -108,13 +111,13 @@ class BankbookGUI(ctk.CTk):
         
         diachi_label = ctk.CTkLabel(row3_frame, text="Địa chỉ:")
         diachi_label.pack(side="left", padx=5)
-        diachi_entry = ctk.CTkEntry(row3_frame)
-        diachi_entry.pack(side="left", expand=True, fill="x", padx=5)
+        self.diachi_entry = ctk.CTkEntry(row3_frame)  # Store as instance variable
+        self.diachi_entry.pack(side="left", expand=True, fill="x", padx=5)
         
         ngaymo_label = ctk.CTkLabel(row3_frame, text="Ngày mở sổ:")
         ngaymo_label.pack(side="left", padx=5)
-        ngaymo_entry = ctk.CTkEntry(row3_frame)
-        ngaymo_entry.pack(side="left", expand=True, fill="x", padx=5)
+        self.ngaymo_entry = ctk.CTkEntry(row3_frame)  # Store as instance variable
+        self.ngaymo_entry.pack(side="left", expand=True, fill="x", padx=5)
 
         # Row 4
         row4_frame = ctk.CTkFrame(form_frame)
@@ -122,8 +125,8 @@ class BankbookGUI(ctk.CTk):
         
         sotiengoi_label = ctk.CTkLabel(row4_frame, text="Số tiền gởi:")
         sotiengoi_label.pack(side="left", padx=5)
-        sotiengoi_entry = ctk.CTkEntry(row4_frame)
-        sotiengoi_entry.pack(side="left", expand=True, fill="x", padx=5)
+        self.sotiengoi_entry = ctk.CTkEntry(row4_frame)  # Store as instance variable
+        self.sotiengoi_entry.pack(side="left", expand=True, fill="x", padx=5)
 
         # Buttons frame
         button_frame = ctk.CTkFrame(self.right_frame)
@@ -132,8 +135,22 @@ class BankbookGUI(ctk.CTk):
         save_button = ctk.CTkButton(button_frame, text="Lưu")
         save_button.pack(side="left", padx=10)
         
-        cancel_button = ctk.CTkButton(button_frame, text="Hủy")
+        cancel_button = ctk.CTkButton(button_frame, text="Huỷ", command=self.clear_bankbook_fields)  # Link to clear fields
         cancel_button.pack(side="left", padx=10)
+
+    def clear_bankbook_fields(self):
+        print("Clear button clicked")  # Debugging statement
+        try:
+            self.maso_entry.delete(0, "end")
+            self.loaitk_entry.delete(0, "end")
+            self.khachhang_entry.delete(0, "end")
+            self.cmnd_entry.delete(0, "end")
+            self.diachi_entry.delete(0, "end")
+            self.ngaymo_entry.delete(0, "end")
+            self.sotiengoi_entry.delete(0, "end")
+            print("Fields cleared successfully")  # Debugging statement
+        except Exception as e:
+            print(f"Error clearing fields: {e}")  # Debugging statement
 
     def create_deposit_slip(self):
         self.clear_right_frame()
