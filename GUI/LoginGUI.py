@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from BankbookGUI import BankbookGUI
 
 class LoginGUI:
     def __init__(self):
@@ -32,12 +33,28 @@ class LoginGUI:
         self.login_button.pack(pady=12, padx=10)
         
     def login_event(self):
-        print("Login button clicked")
+        username = self.username_entry.get()  # Get the entered username
+        password = self.password_entry.get()  # Get the entered password
+
+        #Valid credentials
+        valid_username = "admin"
+        valid_password = "admin"
+
+        if username == valid_username and password == valid_password:
+            print("Login successful")
+            self.window.destroy()  # Close the login window
+            bankbook_gui = BankbookGUI()  # Open the main application window
+            bankbook_gui.mainloop()
+        else:
+            print("Invalid credentials")
+            # Optionally, show an error message to the user
+            error_label = ctk.CTkLabel(master=self.frame, text="Invalid username or password", text_color="red")
+            error_label.pack(pady=5)
         
     def run(self):
         self.window.mainloop()
 
 # Create and run the application
-if __name__ == "__main__":
-    app = LoginGUI()
-    app.run() 
+# if __name__ == "__main__":
+#     app = LoginGUI()
+#     app.run()
