@@ -2,6 +2,7 @@ import customtkinter as ctk
 import Create_deposit_slip_GUI
 import Create_withdrawal_slip_GUI
 import Lookup_Bankbook_GUI
+from utils.db_utils import DatabaseConnection
 
 class BankbookGUI(ctk.CTk):
     def __init__(self, user_id, username, password):
@@ -10,8 +11,9 @@ class BankbookGUI(ctk.CTk):
         self.user_id = user_id  # Store the user ID
         self.username = username  # Store the username
         self.password = password  # Store the password
+        self.db = DatabaseConnection()  # Initialize the database connection utility
 
-        self.title("BankBook Management ")
+        self.title("BankBook Management")
         self.geometry("800x600")
 
         # Configure grid
@@ -68,7 +70,7 @@ class BankbookGUI(ctk.CTk):
 
     def create_bankbook(self):
         self.clear_right_frame()
-        
+
         # Title
         title_label = ctk.CTkLabel(self.right_frame, text="Mở Sổ Tiết Kiệm", font=ctk.CTkFont(size=20, weight="bold"))
         title_label.pack(pady=20)
@@ -123,20 +125,77 @@ class BankbookGUI(ctk.CTk):
         row4_frame = ctk.CTkFrame(form_frame)
         row4_frame.pack(fill="x", padx=10, pady=5)
         
-        sotiengoi_label = ctk.CTkLabel(row4_frame, text="Số tiền gởi:")
-        sotiengoi_label.pack(side="left", padx=5)
-        self.sotiengoi_entry = ctk.CTkEntry(row4_frame)  # Store as instance variable
-        self.sotiengoi_entry.pack(side="left", expand=True, fill="x", padx=5)
+        sotiengui_label = ctk.CTkLabel(row4_frame, text="Số tiền gửi:")
+        sotiengui_label.pack(side="left", padx=5)
+        self.sotiengui_entry = ctk.CTkEntry(row4_frame)  # Store as instance variable
+        self.sotiengui_entry.pack(side="left", expand=True, fill="x", padx=5)
 
         # Buttons frame
         button_frame = ctk.CTkFrame(self.right_frame)
         button_frame.pack(pady=20)
         
-        save_button = ctk.CTkButton(button_frame, text="Lưu")
+        save_button = ctk.CTkButton(button_frame, text="Lưu", command=self.insert_new_record)
         save_button.pack(side="left", padx=10)
         
         cancel_button = ctk.CTkButton(button_frame, text="Huỷ", command=self.clear_bankbook_fields)  # Link to clear fields
         cancel_button.pack(side="left", padx=10)
+
+    def insert_new_record(self):
+        try:
+            # Gather data from form fields
+            maso = self.maso_entry.get()
+            loaitk = self.loaitk_entry.get()
+            khachhang = self.khachhang_entry.get()
+            cmnd = self.cmnd_entry.get()
+            diachi = self.diachi_entry.get()
+            ngaymo = self.ngaymo_entry.get()
+            sotiengui = self.sotiengui_entry.get()
+
+            # Validate required fields
+            if not (maso and loaitk and khachhang and cmnd and diachi and ngaymo and sotiengui):
+                print("All fields are required.")
+                return
+
+            # Connect to the database
+            connection = self.db.connect()
+            cursor = connection.cursor()
+
+            # Insert or update data in the KhachHang table
+            khachhang_query = """
+            INSERT INTO KhachHang (maSo, CMND, hoTen, diaChi)
+            VALUES (?, ?, ?, ?)
+            ON CONFLICT(maSo) DO UPDATE SET
+                CMND = excluded.CMND,
+                hoTen = excluded.hoTen,
+                diaChi = excluded.diaChi
+            """
+            cursor.execute(khachhang_query, (maso, cmnd, khachhang, diachi))
+
+            # Insert data into the SoTietKiem table
+            sotietkiem_query = """
+            INSERT INTO SoTietKiem (maSo, loaiTietKiem, ngayMoSo, soTienGui)
+            VALUES (?, ?, ?, ?)
+            """
+            cursor.execute(sotietkiem_query, (maso, loaitk, ngaymo, sotiengui))
+
+            # Update the soDu field by incrementing it with soTienGui after the insert
+            update_query = """
+            UPDATE SoTietKiem
+            SET soDu = soDu + soTienGui
+            WHERE maSo = ?
+            """
+            cursor.execute(update_query, (maso,))
+
+            # Commit the transaction
+            connection.commit()
+
+            print("New bankbook record and customer data inserted successfully.")
+        except Exception as e:
+            print(f"Error inserting data: {e}")
+        finally:
+            # Ensure the connection is closed
+            if 'connection' in locals() and connection:
+                connection.close()
 
     def clear_bankbook_fields(self):
         print("Clear button clicked")  # Debugging statement
@@ -147,7 +206,7 @@ class BankbookGUI(ctk.CTk):
             self.cmnd_entry.delete(0, "end")
             self.diachi_entry.delete(0, "end")
             self.ngaymo_entry.delete(0, "end")
-            self.sotiengoi_entry.delete(0, "end")
+            self.sotiengui_entry.delete(0, "end")
             print("Fields cleared successfully")  # Debugging statement
         except Exception as e:
             print(f"Error clearing fields: {e}")  # Debugging statement
