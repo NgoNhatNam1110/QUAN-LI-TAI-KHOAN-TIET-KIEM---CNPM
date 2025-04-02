@@ -1,8 +1,10 @@
 import customtkinter as ctk
+from utils.db_utils import DatabaseConnection
 
 class Create_withdrawal_slip_GUI:
     def __init__(self, parent_frame):
         self.parent_frame = parent_frame
+        self.db = DatabaseConnection()  # Initialize the database connection utility
         self.create_screen_withdrawal_slip()
     
     def create_screen_withdrawal_slip(self):
@@ -71,7 +73,7 @@ class Create_withdrawal_slip_GUI:
         button_frame = ctk.CTkFrame(self.parent_frame, fg_color="transparent")
         button_frame.pack(pady=20)
         
-        save_button = ctk.CTkButton(button_frame, text="Lập phiếu")
+        save_button = ctk.CTkButton(button_frame, text="Lập phiếu", command=self.withdrawal_slip_event)
         save_button.pack(side="left", padx=10)
         
         cancel_button = ctk.CTkButton(button_frame, 
@@ -81,6 +83,17 @@ class Create_withdrawal_slip_GUI:
                                      hover_color=("#C82333", "#DC3545"),
                                      **button_style)
         cancel_button.pack(side="left", padx=10)
+
+    def withdrawal_slip_event(self):
+        print("Save button clicked")
+        try:
+            # Example of using the database connection
+            connection = self.db.connect()
+            cursor = connection.cursor()
+            cursor.execute("SELECT * FROM SoTietKiem")
+            print("Data fetched successfully")
+        except Exception as e:
+            print(f"Error fetching withdrawal slip data: {e}")
 
     def clear_fields(self):
         print("Clear button clicked")  # Debugging statement
