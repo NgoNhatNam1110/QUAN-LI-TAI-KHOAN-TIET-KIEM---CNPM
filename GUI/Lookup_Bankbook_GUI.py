@@ -1,8 +1,10 @@
 import customtkinter as ctk
+from utils.db_utils import DatabaseConnection
 
 class Lookup_Bankbook_GUI:
     def __init__(self, parent_frame):
         self.parent_frame = parent_frame
+        self.db = DatabaseConnection()  # Initialize the database connection utility
         self.create_screen_lookup_bankbook()
     
     def create_screen_lookup_bankbook(self):
@@ -13,8 +15,6 @@ class Lookup_Bankbook_GUI:
         # Header and Title
         header_frame = ctk.CTkFrame(main_container, fg_color=("#1f538d"), border_width=1)
         header_frame.pack(fill="x")
-
-        
 
         # Title with border
         title_frame = ctk.CTkFrame(header_frame, fg_color=("#1f538d"))
@@ -42,17 +42,42 @@ class Lookup_Bankbook_GUI:
         table_container.grid_columnconfigure(4, weight=2)  # Số Dư
 
         # Data rows
-        for row in range(2):
-            for col in range(5):
-                if col == 0:
-                    # STT column
+        self.populate_table(table_container)
+
+    def populate_table(self, table_container):
+        try:
+            # Connect to the database
+            connection = self.db.connect()
+            cursor = connection.cursor()
+
+            # Query the database for bankbook data, joining SoTietKiem and KhachHang
+            query = """
+            SELECT 
+                ROW_NUMBER() OVER (ORDER BY stk.maSo) AS STT,  -- Matches "STT" header
+                stk.maSo AS MaSo,                              -- Matches "Mã Số" header
+                stk.loaiTietKiem AS LoaiTietKiem,              -- Matches "Loại Tiết Kiệm" header
+                kh.hoTen AS KhachHang,                         -- Matches "Khách Hàng" header
+                stk.soTienGui AS SoDu                          -- Matches "Số Dư" header
+            FROM SoTietKiem stk
+            JOIN KhachHang kh ON stk.maSo = kh.maSo
+            """
+            cursor.execute(query)
+            rows = cursor.fetchall()
+
+            # Populate the table with data
+            for row_index, row in enumerate(rows):
+                for col_index, value in enumerate(row):
                     cell_frame = ctk.CTkFrame(table_container, border_width=0)
-                    cell_frame.grid(row=row+1, column=col, sticky="nsew", padx=(0,1), pady=(0,1))
-                    cell_label = ctk.CTkLabel(cell_frame, text=str(row+1))
+                    cell_frame.grid(row=row_index + 1, column=col_index, sticky="nsew", padx=(0, 1), pady=(0, 1))
+                    cell_label = ctk.CTkLabel(cell_frame, text=str(value))
                     cell_label.pack(padx=10, pady=8)
-                else:
-                    # Other columns
-                    cell_frame = ctk.CTkFrame(table_container, border_width=0)
-                    cell_frame.grid(row=row+1, column=col, sticky="nsew", padx=(0,1), pady=(0,1))
-                    cell_label = ctk.CTkLabel(cell_frame, text="")
-                    cell_label.pack(padx=10, pady=8)
+
+            print("Data fetched and displayed successfully.")
+
+        except Exception as e:
+            print(f"Error populating table: {e}")
+
+        finally:
+            # Ensure the connection is closed
+            if 'connection' in locals() and connection:
+                connection.close()
