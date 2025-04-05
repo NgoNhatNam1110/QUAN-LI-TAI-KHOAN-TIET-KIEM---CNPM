@@ -2,6 +2,8 @@ import customtkinter as ctk
 import Create_deposit_slip_GUI
 import Create_withdrawal_slip_GUI
 import Lookup_Bankbook_GUI
+import Prepare_monthly_report_GUI
+import Change_rules
 from utils.db_utils import DatabaseConnection
 
 class BankbookGUI(ctk.CTk):
@@ -225,11 +227,11 @@ class BankbookGUI(ctk.CTk):
     
     def prepare_monthly_report(self):
         self.clear_right_frame()
-        # Prepare_monthly_report_GUI.Prepare_monthly_report_GUI(self.right_frame)
+        Prepare_monthly_report_GUI.Prepare_monthly_report_GUI(self.right_frame)
     
-    def change_rules(self):
+    def change_rules(self): 
         self.clear_right_frame()
-        # Change_rules_GUI.Change_rules_GUI(self.right_frame)
+        Change_rules_GUI.Change_rules_GUI(self.right_frame)
 
 # if __name__ == "__main__":
 #     app = BankbookGUI()
