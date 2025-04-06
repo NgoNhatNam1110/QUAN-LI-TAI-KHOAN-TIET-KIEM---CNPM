@@ -1,4 +1,5 @@
 import customtkinter as ctk
+import uuid 
 from utils.db_utils import DatabaseConnection
 
 class Create_withdrawal_slip_GUI:
@@ -56,15 +57,68 @@ class Create_withdrawal_slip_GUI:
 
     def withdrawal_slip_event(self):
         print("Save button clicked")
+        connection = None  # Initialize connection
         try:
-            # Example of using the database connection
-            connection = self.db.connect()
+            # Retrieve input values
+            maso = self.maso_entry.get()
+            khachhang = self.khachhang_entry.get()
+            ngayrut = self.ngayrut_entry.get()
+            sotienrut = self.sotienrut_entry.get()
+            
+            # Validate inputs
+            if not maso or not khachhang or not ngayrut or not sotienrut:
+                print("Field(s) cannot be empty")
+                return
+            
+            # Connect to the database
+            connection = self.db.connect() 
             cursor = connection.cursor()
-            cursor.execute("SELECT * FROM SoTietKiem")
-            print("Data fetched successfully")
+
+            # Query the KhachHang table
+            query = "SELECT * FROM KhachHang WHERE maSo = ? AND hoTen = ?"
+            cursor.execute(query, (maso, khachhang))
+            result = cursor.fetchone()
+            
+            if result:
+                print("Customer exists in the database:", result)
+                
+                 # Insert transaction type into LoaiGiaoDich (if not exists)
+                insert_loai_giaodich_query = """
+                INSERT INTO LoaiGiaoDich (loaiGiaodich, moTa)
+                VALUES ('Rút tiền', 'Rút tiền khỏi tài khoản')
+                ON CONFLICT (loaiGiaodich) DO NOTHING;
+                """
+                cursor.execute(insert_loai_giaodich_query)
+                
+                random_magiaodich = str(uuid.uuid4())  
+                
+                # Insert transaction into Giaodich
+                insert_giaodich_query = """
+                INSERT INTO Giaodich (maGiaoDich, maSo, loaiGiaoDich, SoTien, ngayGiaoDich)
+                VALUES (?, ?, 'RutTien', ?, ?);
+                """
+                cursor.execute(insert_giaodich_query, (random_magiaodich, maso, sotienrut, ngayrut))
+                connection.commit()
+                
+                # Update the SoDu in SoTietKiemSoTietKiem
+                update_sodu_query = """
+                UPDATE SoTietKiem
+                SET SoDu = SoDu - ?
+                WHERE maSo = ?;
+                """
+                cursor.execute(update_sodu_query, (sotienrut, maso))
+                connection.commit()
+                
+                print("Withdrawal slip saved successfully with maGiaoDich:", random_magiaodich)
+            else:
+                print("Customer not found in the database")
+                
         except Exception as e:
             print(f"Error fetching withdrawal slip data: {e}")
-
+        finally:
+            if connection:
+                connection.close()  
+                
     def clear_fields(self):
         print("Clear button clicked")  # Debugging statement
         try:

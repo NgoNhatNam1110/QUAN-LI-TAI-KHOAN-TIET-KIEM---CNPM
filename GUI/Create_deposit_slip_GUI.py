@@ -1,5 +1,7 @@
 import customtkinter as ctk
+import uuid 
 from utils.db_utils import DatabaseConnection
+
 
 class Create_deposit_slip_GUI:
     def __init__(self, parent_frame):
@@ -57,13 +59,16 @@ class Create_deposit_slip_GUI:
 
     def deposit_slip_event(self):
         print("Deposit slip button clicked")
+        connection = None  # Initialize connection
         try:
             # Retrieve input values
             maso = self.maso_entry.get()
             khachhang = self.khachhang_entry.get()
+            ngaygui = self.ngaygui_entry.get()
+            sotiengui = self.sotiengui_entry.get()
 
             # Validate inputs
-            if not maso or not khachhang:
+            if not maso or not khachhang or not ngaygui or not sotiengui:
                 print("Field(s) cannot be empty")
                 return
 
@@ -78,13 +83,44 @@ class Create_deposit_slip_GUI:
 
             if result:
                 print("Customer exists in the database:", result)
-                # Proceed with further processing (e.g., saving deposit slip)
+
+                # Insert transaction type into LoaiGiaoDich (if not exists)
+                insert_loai_giaodich_query = """
+                INSERT INTO LoaiGiaoDich (loaiGiaodich, moTa)
+                VALUES ('GuiTien', 'Gửi tiền vào tài khoản')
+                ON CONFLICT (loaiGiaodich) DO NOTHING;
+                """
+                cursor.execute(insert_loai_giaodich_query)
+
+                # Generate a random unique maGiaoDich
+                random_magiaodich = str(uuid.uuid4())  
+
+                # Insert transaction into Giaodich
+                insert_giaodich_query = """
+                INSERT INTO Giaodich (maGiaoDich, maSo, loaiGiaoDich, SoTien, ngayGiaoDich)
+                VALUES (?, ?, 'GuiTien', ?, ?);
+                """
+                cursor.execute(insert_giaodich_query, (random_magiaodich, maso, sotiengui, ngaygui))
+                connection.commit()
+
+                # Update the SoDu in SoTietKiem
+                update_sodu_query = """
+                UPDATE SoTietKiem
+                SET SoDu = SoDu + ?
+                WHERE maSo = ?;
+                """
+                cursor.execute(update_sodu_query, (sotiengui, maso))
+                connection.commit()
+
+                print("Deposit slip saved successfully with maGiaoDich:", random_magiaodich)
             else:
                 print("Customer not found in the database")
 
         except Exception as e:
             print(f"Error during deposit slip event: {e}")
-
+        finally:
+            if connection:
+                connection.close()
     def clear_fields(self):
         print("Cancel button clicked")
         try:
