@@ -3,14 +3,14 @@ import sqlite3
 class DatabaseConnection:
     def __init__(self, db_path="db.db"):
         self.db_path = db_path
-        self.connection = None
 
     def connect(self):
-        if self.connection is None:
-            self.connection = sqlite3.connect(self.db_path)
-        return self.connection
+        # Tạo kết nối mới mỗi lần gọi
+        connection = sqlite3.connect(self.db_path, timeout=10)  # Tăng thời gian chờ
+        connection.execute("PRAGMA journal_mode=WAL;")  # Bật chế độ WAL
+        return connection
 
-    def close(self):
-        if self.connection:
-            self.connection.close()
-            self.connection = None
+    def close(self, connection):
+        # Đóng kết nối được truyền vào
+        if connection:
+            connection.close()
