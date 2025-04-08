@@ -1,4 +1,4 @@
-#Lưu ý
+#Lưu ý:
 <br> Thứ nhất: Mỗi lần ai đó commit thì hãy báo cho cả nhóm biết </br>
 <br> Thứ nhì: Mọi người (yes, tất cả mọi người) gõ lệnh này vào trong foler của project để kéo update về máy mình: </br>
 <br> git checkout </br>
