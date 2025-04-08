@@ -163,36 +163,25 @@ class BankbookGUI(ctk.CTk):
             connection = self.db.connect()
             cursor = connection.cursor()
 
-            # Insert or update data in the KhachHang table
-            khachhang_query = """
-            INSERT INTO KhachHang (maSo, CMND, hoTen, diaChi)
-            VALUES (?, ?, ?, ?)
-            ON CONFLICT(maSo) DO UPDATE SET
-                CMND = excluded.CMND,
-                hoTen = excluded.hoTen,
-                diaChi = excluded.diaChi
-            """
-            cursor.execute(khachhang_query, (maso, cmnd, khachhang, diachi))
-
             # Insert data into the SoTietKiem table
             sotietkiem_query = """
-            INSERT INTO SoTietKiem (maSo, loaiTietKiem, ngayMoSo, soTienGui)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO SoTietKiem (maSo, loaiTietKiem, hoTen, CMND, diaChi, ngayMoSo, soTienGui, soDu)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(maSo) DO UPDATE SET
+                loaiTietKiem = excluded.loaiTietKiem,
+                hoTen = excluded.hoTen,
+                CMND = excluded.CMND,
+                diaChi = excluded.diaChi,
+                ngayMoSo = excluded.ngayMoSo,
+                soTienGui = excluded.soTienGui,
+                soDu = soDu + excluded.soTienGui
             """
-            cursor.execute(sotietkiem_query, (maso, loaitk, ngaymo, sotiengui))
-
-            # Update the soDu field by incrementing it with soTienGui after the insert
-            update_query = """
-            UPDATE SoTietKiem
-            SET soDu = soDu + soTienGui
-            WHERE maSo = ?
-            """
-            cursor.execute(update_query, (maso,))
+            cursor.execute(sotietkiem_query, (maso, loaitk, khachhang, cmnd, diachi, ngaymo, sotiengui, sotiengui))
 
             # Commit the transaction
             connection.commit()
 
-            print("New bankbook record and customer data inserted successfully.")
+            print("New bankbook record inserted successfully.")
         except Exception as e:
             print(f"Error inserting data: {e}")
         finally:

@@ -76,13 +76,13 @@ class Create_deposit_slip_GUI:
             connection = self.db.connect()
             cursor = connection.cursor()
 
-            # Query the KhachHang table
-            query = "SELECT * FROM KhachHang WHERE maSo = ? AND hoTen = ?"
+            # Validate if the bankbook exists and matches the customer name
+            query = "SELECT * FROM SoTietKiem WHERE maSo = ? AND hoTen = ?"
             cursor.execute(query, (maso, khachhang))
             result = cursor.fetchone()
 
             if result:
-                print("Customer exists in the database:", result)
+                print("Bankbook exists in the database:", result)
 
                 # Insert transaction type into LoaiGiaoDich (if not exists)
                 insert_loai_giaodich_query = """
@@ -114,13 +114,14 @@ class Create_deposit_slip_GUI:
 
                 print("Deposit slip saved successfully with maGiaoDich:", random_magiaodich)
             else:
-                print("Customer not found in the database")
+                print("Bankbook not found or customer name does not match")
 
         except Exception as e:
             print(f"Error during deposit slip event: {e}")
         finally:
             if connection:
                 connection.close()
+
     def clear_fields(self):
         print("Cancel button clicked")
         try:

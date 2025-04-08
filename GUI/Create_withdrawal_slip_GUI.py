@@ -74,22 +74,29 @@ class Create_withdrawal_slip_GUI:
             connection = self.db.connect() 
             cursor = connection.cursor()
 
-            # Query the KhachHang table
-            query = "SELECT * FROM KhachHang WHERE maSo = ? AND hoTen = ?"
+            # Validate if the bankbook exists and matches the customer name
+            query = "SELECT SoDu FROM SoTietKiem WHERE maSo = ? AND hoTen = ?"
             cursor.execute(query, (maso, khachhang))
             result = cursor.fetchone()
             
             if result:
-                print("Customer exists in the database:", result)
+                current_balance = result[0]
+                print("Bankbook exists in the database with balance:", current_balance)
+
+                # Check if the withdrawal amount exceeds the current balance
+                if float(sotienrut) > current_balance:
+                    print("Insufficient balance for withdrawal")
+                    return
                 
-                 # Insert transaction type into LoaiGiaoDich (if not exists)
+                # Insert transaction type into LoaiGiaoDich (if not exists)
                 insert_loai_giaodich_query = """
                 INSERT INTO LoaiGiaoDich (loaiGiaodich, moTa)
-                VALUES ('Rút tiền', 'Rút tiền khỏi tài khoản')
+                VALUES ('RutTien', 'Rút tiền khỏi tài khoản')
                 ON CONFLICT (loaiGiaodich) DO NOTHING;
                 """
                 cursor.execute(insert_loai_giaodich_query)
                 
+                # Generate a random unique maGiaoDich
                 random_magiaodich = str(uuid.uuid4())  
                 
                 # Insert transaction into Giaodich
@@ -100,7 +107,7 @@ class Create_withdrawal_slip_GUI:
                 cursor.execute(insert_giaodich_query, (random_magiaodich, maso, sotienrut, ngayrut))
                 connection.commit()
                 
-                # Update the SoDu in SoTietKiemSoTietKiem
+                # Update the SoDu in SoTietKiem
                 update_sodu_query = """
                 UPDATE SoTietKiem
                 SET SoDu = SoDu - ?
@@ -111,7 +118,7 @@ class Create_withdrawal_slip_GUI:
                 
                 print("Withdrawal slip saved successfully with maGiaoDich:", random_magiaodich)
             else:
-                print("Customer not found in the database")
+                print("Bankbook not found or customer name does not match")
                 
         except Exception as e:
             print(f"Error fetching withdrawal slip data: {e}")
