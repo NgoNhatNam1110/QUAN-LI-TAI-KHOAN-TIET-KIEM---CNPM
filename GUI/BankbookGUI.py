@@ -6,7 +6,7 @@ import Lookup_Bankbook_GUI
 import Prepare_monthly_report_GUI
 
 from utils.db_utils import DatabaseConnection
-from BUS.BankbookBUS import BankbookBUS
+
 
 
 class BankbookGUI(ctk.CTk):
@@ -17,7 +17,6 @@ class BankbookGUI(ctk.CTk):
         self.username = username  # Store the username
         self.password = password  # Store the password
         self.db = DatabaseConnection()  # Initialize the database connection utility
-        self.bankbook_bus = BankbookBUS()  # Initialize the business layer
 
         self.title("BankBook Management")
         self.geometry("800x600")
@@ -199,17 +198,35 @@ class BankbookGUI(ctk.CTk):
                 self.entry_var.set("")
                 self.sotiengui_entry.focus()
 
-            # Call the business layer to insert the record
-            result = self.bankbook_bus.insert_new_record(
-                maso, loaitk, khachhang, cmnd, diachi, ngaymo, sotiengui
-            )
+            # Connect to the database
+            connection = self.db.connect()
+            cursor = connection.cursor()
 
-            if result:
-                print("New bankbook record inserted successfully.")
-            else:
-                print("Failed to insert bankbook record.")
+            # Insert data into the SoTietKiem table
+            sotietkiem_query = """
+            INSERT INTO SoTietKiem (maSo, loaiTietKiem, hoTen, CMND, diaChi, ngayMoSo, soTienGui, soDu)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(maSo) DO UPDATE SET
+                loaiTietKiem = excluded.loaiTietKiem,
+                hoTen = excluded.hoTen,
+                CMND = excluded.CMND,
+                diaChi = excluded.diaChi,
+                ngayMoSo = excluded.ngayMoSo,
+                soTienGui = excluded.soTienGui,
+                soDu = soDu + excluded.soTienGui
+            """
+            cursor.execute(sotietkiem_query, (maso, loaitk, khachhang, cmnd, diachi, ngaymo, sotiengui, sotiengui))
+
+            # Commit the transaction
+            connection.commit()
+
+            print("New bankbook record inserted successfully.")
         except Exception as e:
             print(f"Error inserting data: {e}")
+        finally:
+            # Ensure the connection is closed
+            if 'connection' in locals() and connection:
+                connection.close()
 
     def clear_bankbook_fields(self):
         print("Clear button clicked")  # Debugging statement
