@@ -5,24 +5,20 @@ import Create_withdrawal_slip_GUI
 import Lookup_Bankbook_GUI
 import Prepare_monthly_report_GUI
 from utils.db_utils import DatabaseConnection
-from BUS.BankbookBUS import BankbookBUS
+
 
 
 class BankbookGUI(ctk.CTk):
     def __init__(self, user_id, username, password):
         super().__init__()
 
-        # Store user information
-        self.user_id = user_id
-        self.username = username
-        self.password = password
-        self.db = DatabaseConnection()
-        self.bankbook_bus = BankbookBUS()
+        self.user_id = user_id  # Store the user ID
+        self.username = username  # Store the username
+        self.password = password  # Store the password
+        self.db = DatabaseConnection()  # Initialize the database connection utility
 
-        # Configure window
-        self.title("Quản Lý Sổ Tiết Kiệm")
-        # self.geometry("800x600")
-        self.geometry("1200x800") 
+        self.title("BankBook Management")
+        self.geometry("800x600")
 
         # Configure grid
         self.grid_rowconfigure(0, weight=1)
@@ -295,29 +291,35 @@ class BankbookGUI(ctk.CTk):
                 self.entry_var.set("")
                 self.sotiengui_entry.focus()
 
-            # Validate minimum deposit amount
-            try:
-                value = float(self.sotiengui_entry.get().replace(",", ""))
-                if value < 1000000:
-                    messagebox.showerror("Lỗi", "Số tiền phải lớn hơn hoặc bằng 1,000,000!")
-                    self.sotiengui_entry.focus()        
-                    return
-            except ValueError:
-                messagebox.showerror("Lỗi", "Vui lòng nhập một số hợp lệ!")
-                self.sotiengui_entry.focus()
-                return
+            # Connect to the database
+            connection = self.db.connect()
+            cursor = connection.cursor()
 
-            # Insert record
-            result = self.bankbook_bus.insert_new_record(
-                maso, loaitk, khachhang, cmnd, diachi, ngaymo, sotiengui
-            )
+            # Insert data into the SoTietKiem table
+            sotietkiem_query = """
+            INSERT INTO SoTietKiem (maSo, loaiTietKiem, hoTen, CMND, diaChi, ngayMoSo, soTienGui, soDu)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(maSo) DO UPDATE SET
+                loaiTietKiem = excluded.loaiTietKiem,
+                hoTen = excluded.hoTen,
+                CMND = excluded.CMND,
+                diaChi = excluded.diaChi,
+                ngayMoSo = excluded.ngayMoSo,
+                soTienGui = excluded.soTienGui,
+                soDu = soDu + excluded.soTienGui
+            """
+            cursor.execute(sotietkiem_query, (maso, loaitk, khachhang, cmnd, diachi, ngaymo, sotiengui, sotiengui))
 
-            if result:
-                messagebox.showinfo("Thành công", "Mở sổ tiết kiệm thành công")
-            else:
-                messagebox.showerror("Lỗi", "Không thể mở sổ tiết kiệm")
+            # Commit the transaction
+            connection.commit()
+
+            print("New bankbook record inserted successfully.")
         except Exception as e:
             print(f"Error inserting data: {e}")
+        finally:
+            # Ensure the connection is closed
+            if 'connection' in locals() and connection:
+                connection.close()
 
     def clear_bankbook_fields(self):
         """Clear all form fields"""
