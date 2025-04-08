@@ -6,7 +6,7 @@ import Lookup_Bankbook_GUI
 import Prepare_monthly_report_GUI
 
 from utils.db_utils import DatabaseConnection
-from BUS.BankbookBUS import BankbookBUS
+
 
 
 class BankbookGUI(ctk.CTk):
@@ -17,15 +17,6 @@ class BankbookGUI(ctk.CTk):
         self.username = username  # Store the username
         self.password = password  # Store the password
         self.db = DatabaseConnection()  # Initialize the database connection utility
-        self.bankbook_bus = BankbookBUS()  # Initialize the business layer
-
-        self.title("BankBook Management")
-
-        self.user_id = user_id  # Store the user ID
-        self.username = username  # Store the username
-        self.password = password  # Store the password
-        self.db = DatabaseConnection()  # Initialize the database connection utility
-        self.bankbook_bus = BankbookBUS()  # Initialize the business layer
 
         self.title("BankBook Management")
         self.geometry("800x600")
@@ -247,63 +238,35 @@ class BankbookGUI(ctk.CTk):
                 self.entry_var.set("")
                 self.sotiengui_entry.focus()
 
-            # Validate CMND
-            if self.checkCMND(cmnd):
-                messagebox.showerror(
-                    "Lỗi",
-                    "CMND đã tồn tại trong hệ thống!"
-                )
-                self.entry_var.set("")
-                self.cmnd_entry.focus()
-                return
-            
-            # Validate maso
-            if self.checkmaso(maso):
-                messagebox.showerror(
-                    "Lỗi",
-                    "Mã số đã tồn tại trong hệ thống!"
-                )
-                self.entry_var.set("")
-                self.maso_entry.focus()
-                return
-            
-            # check required money
-            try:
-                value = float(self.sotiengui_entry.get().replace(",", ""))
-                if value < 1000000:
-                    messagebox.showerror(
-                        "Lỗi",
-                        "Số tiền phải lớn hơn hoặc bằng 1,000,000!"
-                    )
-                    self.entry_var.set("")
-                    self.sotiengui_entry.focus()        
-                    return
-            except ValueError:
-                messagebox.showerror(
-                    "Lỗi",
-                    "Vui lòng nhập một số hợp lệ!"
-                )
-                self.entry_var.set("")
-                self.sotiengui_entry.focus()
-                return
-            # Call the business layer to insert the record
-            result = self.bankbook_bus.insert_new_record(
-                maso, loaitk, khachhang, cmnd, diachi, ngaymo, sotiengui
-            )
+            # Connect to the database
+            connection = self.db.connect()
+            cursor = connection.cursor()
 
-            if result:
-                print("New bankbook record inserted successfully.")
-            else:
-                print("Failed to insert bankbook record.")
+            # Insert data into the SoTietKiem table
+            sotietkiem_query = """
+            INSERT INTO SoTietKiem (maSo, loaiTietKiem, hoTen, CMND, diaChi, ngayMoSo, soTienGui, soDu)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(maSo) DO UPDATE SET
+                loaiTietKiem = excluded.loaiTietKiem,
+                hoTen = excluded.hoTen,
+                CMND = excluded.CMND,
+                diaChi = excluded.diaChi,
+                ngayMoSo = excluded.ngayMoSo,
+                soTienGui = excluded.soTienGui,
+                soDu = soDu + excluded.soTienGui
+            """
+            cursor.execute(sotietkiem_query, (maso, loaitk, khachhang, cmnd, diachi, ngaymo, sotiengui, sotiengui))
+
+            # Commit the transaction
+            connection.commit()
+
+            print("New bankbook record inserted successfully.")
         except Exception as e:
             print(f"Error inserting data: {e}")
-
-    def update_selected_date(self, event=None):
-        selected_date = self.calendar.get_date()
-        date_obj = datetime.strptime(selected_date, '%m/%d/%y')
-        formatted_date = date_obj.strftime("%d/%m/%Y")
-        self.ngaymo_entry.delete(0, 'end')
-        self.ngaymo_entry.insert(0, formatted_date)
+        finally:
+            # Ensure the connection is closed
+            if 'connection' in locals() and connection:
+                connection.close()
 
     def clear_bankbook_fields(self):
         print("Clear button clicked")  # Debugging statement
