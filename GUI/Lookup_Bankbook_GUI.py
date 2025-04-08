@@ -50,16 +50,15 @@ class Lookup_Bankbook_GUI:
             connection = self.db.connect()
             cursor = connection.cursor()
 
-            # Query the database for bankbook data, joining SoTietKiem and KhachHang
+            # Query the database for bankbook data from SoTietKiem
             query = """
             SELECT 
-                ROW_NUMBER() OVER (ORDER BY stk.maSo) AS STT,  -- Matches "STT" header
-                stk.maSo AS MaSo,                              -- Matches "Mã Số" header
-                stk.loaiTietKiem AS LoaiTietKiem,              -- Matches "Loại Tiết Kiệm" header
-                kh.hoTen AS KhachHang,                         -- Matches "Khách Hàng" header
-                stk.soTienGui AS SoDu                          -- Matches "Số Dư" header
-            FROM SoTietKiem stk
-            JOIN KhachHang kh ON stk.maSo = kh.maSo
+                ROW_NUMBER() OVER (ORDER BY maSo) AS STT,  -- Matches "STT" header
+                maSo AS MaSo,                              -- Matches "Mã Số" header
+                loaiTietKiem AS LoaiTietKiem,              -- Matches "Loại Tiết Kiệm" header
+                hoTen AS KhachHang,                        -- Matches "Khách Hàng" header
+                soDu AS SoDu                               -- Matches "Số Dư" header
+            FROM SoTietKiem
             """
             cursor.execute(query)
             rows = cursor.fetchall()
