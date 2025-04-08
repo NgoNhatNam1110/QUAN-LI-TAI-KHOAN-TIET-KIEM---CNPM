@@ -1,3 +1,11 @@
+#Lưu ý
+<br> Thứ nhất: Mỗi lần ai đó commit thì hãy báo cho cả nhóm biết </br>
+<br> Thứ nhì: Mọi người (yes, tất cả mọi người) gõ lệnh này vào trong foler của project: </br>
+<br> git checkout </br>
+<br> git fetch origin </br>
+<br> git rebase origin/main </br>
+<br> git pull </br>
+
 # Tools
 <br> Power Designer: https://drive.google.com/file/d/17IRW0mnfFuy6IGy87TTbrYaOmdEPoltG/view?usp=sharing </br>
 
