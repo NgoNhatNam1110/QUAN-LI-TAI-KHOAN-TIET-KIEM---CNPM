@@ -46,27 +46,8 @@ class Lookup_Bankbook_GUI:
 
     def populate_table(self):
         try:
-# <<<<<<< datnham0212
-#             # Fetch data from the business layer
-#             data = self.lookup_bankbook_bus.get_all_bankbooks()
-# =======
-#             # Connect to the database
-#             connection = self.db.connect()
-#             cursor = connection.cursor()
-
-#             # Query the database for bankbook data from SoTietKiem
-#             query = """
-#             SELECT 
-#                 ROW_NUMBER() OVER (ORDER BY maSo) AS STT,  -- Matches "STT" header
-#                 maSo AS MaSo,                              -- Matches "Mã Số" header
-#                 loaiTietKiem AS LoaiTietKiem,              -- Matches "Loại Tiết Kiệm" header
-#                 hoTen AS KhachHang,                        -- Matches "Khách Hàng" header
-#                 soDu AS SoDu                               -- Matches "Số Dư" header
-#             FROM SoTietKiem
-#             """
-#             cursor.execute(query)
-#             rows = cursor.fetchall()
-# >>>>>>> main
+            # Fetch data from the business layer
+            data = self.lookup_bankbook_bus.get_all_bankbooks()
 
             # Populate the table with data
             for row_index, row in enumerate(data):
