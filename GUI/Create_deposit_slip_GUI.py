@@ -1,13 +1,11 @@
 import customtkinter as ctk
-import uuid 
-from utils.db_utils import DatabaseConnection
+from BUS.Create_deposit_slip_BUS import Create_deposit_slip_BUS
 
 
 class Create_deposit_slip_GUI:
     def __init__(self, parent_frame):
         self.parent_frame = parent_frame
-        self.db = DatabaseConnection()  # Initialize the database connection utility
-        print(f"Parent frame: {self.parent_frame}")  # Debugging statement
+        self.create_deposit_slip_bus = Create_deposit_slip_BUS()  # Initialize the business layer
         self.create_screen_deposit_slip()
 
     def create_screen_deposit_slip(self):
@@ -76,15 +74,13 @@ class Create_deposit_slip_GUI:
         button_frame = ctk.CTkFrame(self.parent_frame, fg_color="transparent")
         button_frame.pack(pady=20)
         
-        save_button = ctk.CTkButton(button_frame, text="Lập phiếu", command=self.deposit_slip_event)  # Link to deposit_slip_event
+        save_button = ctk.CTkButton(button_frame, text="Lập phiếu", command=self.deposit_slip_event)
         save_button.pack(side="left", padx=10)
         
-        cancel_button = ctk.CTkButton(button_frame, text="Huỷ", command=self.clear_fields)  # Link to cancel_event
+        cancel_button = ctk.CTkButton(button_frame, text="Huỷ", command=self.clear_fields)
         cancel_button.pack(side="left", padx=10)
 
     def deposit_slip_event(self):
-        print("Deposit slip button clicked")
-        connection = None  # Initialize connection
         try:
             # Retrieve input values
             maso = self.maso_entry.get()
@@ -100,58 +96,17 @@ class Create_deposit_slip_GUI:
                 )
                 return
 
-            # Connect to the database
-            connection = self.db.connect()
-            cursor = connection.cursor()
-
-            # Validate if the bankbook exists and matches the customer name
-            query = "SELECT * FROM SoTietKiem WHERE maSo = ? AND hoTen = ?"
-            cursor.execute(query, (maso, khachhang))
-            result = cursor.fetchone()
+            # Call the business layer to handle the deposit slip creation
+            result = self.create_deposit_slip_bus.create_deposit_slip(maso, khachhang, ngaygui, sotiengui)
 
             if result:
-                print("Bankbook exists in the database:", result)
-
-                # Insert transaction type into LoaiGiaoDich (if not exists)
-                insert_loai_giaodich_query = """
-                INSERT INTO LoaiGiaoDich (loaiGiaodich, moTa)
-                VALUES ('GuiTien', 'Gửi tiền vào tài khoản')
-                ON CONFLICT (loaiGiaodich) DO NOTHING;
-                """
-                cursor.execute(insert_loai_giaodich_query)
-
-                # Generate a random unique maGiaoDich
-                random_magiaodich = str(uuid.uuid4())  
-
-                # Insert transaction into Giaodich
-                insert_giaodich_query = """
-                INSERT INTO Giaodich (maGiaoDich, maSo, loaiGiaoDich, SoTien, ngayGiaoDich)
-                VALUES (?, ?, 'GuiTien', ?, ?);
-                """
-                cursor.execute(insert_giaodich_query, (random_magiaodich, maso, sotiengui, ngaygui))
-                connection.commit()
-
-                # Update the SoDu in SoTietKiem
-                update_sodu_query = """
-                UPDATE SoTietKiem
-                SET SoDu = SoDu + ?
-                WHERE maSo = ?;
-                """
-                cursor.execute(update_sodu_query, (sotiengui, maso))
-                connection.commit()
-
-                print("Deposit slip saved successfully with maGiaoDich:", random_magiaodich)
+                print("Deposit slip created successfully.")
             else:
-                print("Bankbook not found or customer name does not match")
-
+                print("Failed to create deposit slip.")
         except Exception as e:
             print(f"Error during deposit slip event: {e}")
-        finally:
-            if connection:
-                connection.close()
 
     def clear_fields(self):
-        print("Cancel button clicked")
         try:
             self.maso_entry.delete(0, "end")
             self.khachhang_entry.delete(0, "end")
