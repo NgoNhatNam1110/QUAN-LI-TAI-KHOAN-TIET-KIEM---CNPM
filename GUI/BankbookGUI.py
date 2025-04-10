@@ -161,15 +161,41 @@ class BankbookGUI(ctk.CTk):
                 print("All fields are required.")
                 return
 
-            # Call the business layer to insert the record
-            result = self.bankbook_bus.insert_new_record(
-                maso, loaitk, khachhang, cmnd, diachi, ngaymo, sotiengui
-            )
+# <<<<<<< datnham0212
+#             # Call the business layer to insert the record
+#             result = self.bankbook_bus.insert_new_record(
+#                 maso, loaitk, khachhang, cmnd, diachi, ngaymo, sotiengui
+#             )
 
-            if result:
-                print("New bankbook record inserted successfully.")
-            else:
-                print("Failed to insert bankbook record.")
+#             if result:
+#                 print("New bankbook record inserted successfully.")
+#             else:
+#                 print("Failed to insert bankbook record.")
+# =======
+#             # Connect to the database
+#             connection = self.db.connect()
+#             cursor = connection.cursor()
+
+#             # Insert data into the SoTietKiem table
+#             sotietkiem_query = """
+#             INSERT INTO SoTietKiem (maSo, loaiTietKiem, hoTen, CMND, diaChi, ngayMoSo, soTienGui, soDu)
+#             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+#             ON CONFLICT(maSo) DO UPDATE SET
+#                 loaiTietKiem = excluded.loaiTietKiem,
+#                 hoTen = excluded.hoTen,
+#                 CMND = excluded.CMND,
+#                 diaChi = excluded.diaChi,
+#                 ngayMoSo = excluded.ngayMoSo,
+#                 soTienGui = excluded.soTienGui,
+#                 soDu = soDu + excluded.soTienGui
+#             """
+#             cursor.execute(sotietkiem_query, (maso, loaitk, khachhang, cmnd, diachi, ngaymo, sotiengui, sotiengui))
+
+#             # Commit the transaction
+#             connection.commit()
+
+#             print("New bankbook record inserted successfully.")
+# >>>>>>> main
         except Exception as e:
             print(f"Error inserting data: {e}")
 

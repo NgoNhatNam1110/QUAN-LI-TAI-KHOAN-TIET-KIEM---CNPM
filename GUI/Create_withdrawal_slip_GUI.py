@@ -70,10 +70,59 @@ class Create_withdrawal_slip_GUI:
             # Call the business layer to handle the withdrawal slip creation
             result = self.create_withdrawal_slip_bus.create_withdrawal_slip(maso, khachhang, ngayrut, sotienrut)
 
-            if result:
-                print("Withdrawal slip created successfully.")
-            else:
-                print("Failed to create withdrawal slip.")
+# <<<<<<< datnham0212
+#             if result:
+#                 print("Withdrawal slip created successfully.")
+#             else:
+#                 print("Failed to create withdrawal slip.")
+# =======
+#             # Validate if the bankbook exists and matches the customer name
+#             query = "SELECT SoDu FROM SoTietKiem WHERE maSo = ? AND hoTen = ?"
+#             cursor.execute(query, (maso, khachhang))
+#             result = cursor.fetchone()
+            
+#             if result:
+#                 current_balance = result[0]
+#                 print("Bankbook exists in the database with balance:", current_balance)
+
+#                 # Check if the withdrawal amount exceeds the current balance
+#                 if float(sotienrut) > current_balance:
+#                     print("Insufficient balance for withdrawal")
+#                     return
+                
+#                 # Insert transaction type into LoaiGiaoDich (if not exists)
+#                 insert_loai_giaodich_query = """
+#                 INSERT INTO LoaiGiaoDich (loaiGiaodich, moTa)
+#                 VALUES ('RutTien', 'Rút tiền khỏi tài khoản')
+#                 ON CONFLICT (loaiGiaodich) DO NOTHING;
+#                 """
+#                 cursor.execute(insert_loai_giaodich_query)
+                
+#                 # Generate a random unique maGiaoDich
+#                 random_magiaodich = str(uuid.uuid4())  
+                
+#                 # Insert transaction into Giaodich
+#                 insert_giaodich_query = """
+#                 INSERT INTO Giaodich (maGiaoDich, maSo, loaiGiaoDich, SoTien, ngayGiaoDich)
+#                 VALUES (?, ?, 'RutTien', ?, ?);
+#                 """
+#                 cursor.execute(insert_giaodich_query, (random_magiaodich, maso, sotienrut, ngayrut))
+#                 connection.commit()
+                
+#                 # Update the SoDu in SoTietKiem
+#                 update_sodu_query = """
+#                 UPDATE SoTietKiem
+#                 SET SoDu = SoDu - ?
+#                 WHERE maSo = ?;
+#                 """
+#                 cursor.execute(update_sodu_query, (sotienrut, maso))
+#                 connection.commit()
+                
+#                 print("Withdrawal slip saved successfully with maGiaoDich:", random_magiaodich)
+#             else:
+#                 print("Bankbook not found or customer name does not match")
+                
+# >>>>>>> main
         except Exception as e:
             print(f"Error during withdrawal slip event: {e}")
 
