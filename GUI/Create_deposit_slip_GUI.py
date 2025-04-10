@@ -68,67 +68,15 @@ class Create_deposit_slip_GUI:
                 print("Field(s) cannot be empty")
                 return
 
-# <<<<<<< datnham0212
-#             # Call the business layer to handle the deposit slip creation
-#             result = self.create_deposit_slip_bus.create_deposit_slip(maso, khachhang, ngaygui, sotiengui)
+            # Call the business layer to handle the deposit slip creation
+            result = self.create_deposit_slip_bus.create_deposit_slip(maso, khachhang, ngaygui, sotiengui)
 
-#             if result:
-#                 print("Deposit slip created successfully.")
-#             else:
-#                 print("Failed to create deposit slip.")
-#         except Exception as e:
-#             print(f"Error during deposit slip event: {e}")
-# =======
-#             # Connect to the database
-#             connection = self.db.connect()
-#             cursor = connection.cursor()
-
-#             # Validate if the bankbook exists and matches the customer name
-#             query = "SELECT * FROM SoTietKiem WHERE maSo = ? AND hoTen = ?"
-#             cursor.execute(query, (maso, khachhang))
-#             result = cursor.fetchone()
-
-#             if result:
-#                 print("Bankbook exists in the database:", result)
-
-#                 # Insert transaction type into LoaiGiaoDich (if not exists)
-#                 insert_loai_giaodich_query = """
-#                 INSERT INTO LoaiGiaoDich (loaiGiaodich, moTa)
-#                 VALUES ('GuiTien', 'Gửi tiền vào tài khoản')
-#                 ON CONFLICT (loaiGiaodich) DO NOTHING;
-#                 """
-#                 cursor.execute(insert_loai_giaodich_query)
-
-#                 # Generate a random unique maGiaoDich
-#                 random_magiaodich = str(uuid.uuid4())  
-
-#                 # Insert transaction into Giaodich
-#                 insert_giaodich_query = """
-#                 INSERT INTO Giaodich (maGiaoDich, maSo, loaiGiaoDich, SoTien, ngayGiaoDich)
-#                 VALUES (?, ?, 'GuiTien', ?, ?);
-#                 """
-#                 cursor.execute(insert_giaodich_query, (random_magiaodich, maso, sotiengui, ngaygui))
-#                 connection.commit()
-
-#                 # Update the SoDu in SoTietKiem
-#                 update_sodu_query = """
-#                 UPDATE SoTietKiem
-#                 SET SoDu = SoDu + ?
-#                 WHERE maSo = ?;
-#                 """
-#                 cursor.execute(update_sodu_query, (sotiengui, maso))
-#                 connection.commit()
-
-#                 print("Deposit slip saved successfully with maGiaoDich:", random_magiaodich)
-#             else:
-#                 print("Bankbook not found or customer name does not match")
-
-#         except Exception as e:
-#             print(f"Error during deposit slip event: {e}")
-#         finally:
-#             if connection:
-#                 connection.close()
-# >>>>>>> main
+            if result:
+                print("Deposit slip created successfully.")
+            else:
+                print("Failed to create deposit slip.")
+        except Exception as e:
+            print(f"Error during deposit slip event: {e}")
 
     def clear_fields(self):
         try:
