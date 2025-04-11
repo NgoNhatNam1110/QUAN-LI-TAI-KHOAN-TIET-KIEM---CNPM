@@ -134,9 +134,10 @@ class BankbookGUI(ctk.CTk):
         # Row 4
         row4_frame = ctk.CTkFrame(form_frame)
         row4_frame.pack(fill="x", padx=10, pady=5)
-        # Row5
+        # Row 5
         row5_frame = ctk.CTkFrame(form_frame)
         row5_frame.pack(fill="x", padx=10, pady=5)
+        # Row 6
         row6_frame = ctk.CTkFrame(form_frame)
         row6_frame.pack(fill="x", padx=10, pady=5)
 
