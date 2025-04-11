@@ -215,8 +215,6 @@ class BankbookGUI(ctk.CTk):
         self.sotiengui_entry = ctk.CTkEntry(row5_frame, **entry_style)
         self.sotiengui_entry.pack(side="left", expand=True, fill="x", padx=5)
         self.entry_var = ctk.StringVar()
-        self.submit_btn = ctk.CTkButton(row5_frame, text="submit", command=self.validate_input)
-        self.submit_btn.pack(side="left", expand= True, fill="x", padx=5)
         self.result_label = ctk.CTkLabel(row6_frame, text="")
         self.result_label.pack(side="left", expand= True, fill="x", padx=5)
 
@@ -248,36 +246,13 @@ class BankbookGUI(ctk.CTk):
                                      **button_style)
         cancel_button.pack(side="left", padx=10)
 
-    def validate_input(self):
-        try:
-            value = float(self.sotiengui_entry.get().replace(",", ""))
-            if value >= 1000000:
-                self.result_label.configure(
-                    text=f"Giá trị hợp lệ: {value:,.0f}",
-                    text_color="green"
-                )
-            else:
-                messagebox.showerror(
-                    "Lỗi",
-                    "Số tiền phải lớn hơn hoặc bằng 1,000,000!"
-                )
-                self.entry_var.set("")
-                self.sotiengui_entry.focus()
-        except ValueError:
-            messagebox.showerror(
-                "Lỗi",
-                "Vui lòng nhập một số hợp lệ!"
-            )
-            self.entry_var.set("")
-            self.sotiengui_entry.focus()
-
-
     def insert_new_record(self):
         """Insert a new savings account record"""
         try:
             # Get form data
             maso = self.maso_entry.get()
             # loaitk = self.loaitk_entry.get()
+            loaitk = self.selected_option.get()
             khachhang = self.khachhang_entry.get()
             cmnd = self.cmnd_entry.get()
             diachi = self.diachi_entry.get()
@@ -295,6 +270,29 @@ class BankbookGUI(ctk.CTk):
                 messagebox.showerror("Lỗi", "Mã số đã tồn tại trong hệ thống!")
                 self.maso_entry.focus()
                 return
+            
+            # check if 
+            try:
+                value = float(self.sotiengui_entry.get().replace(",", ""))
+                if value >= 1000000:
+                    self.result_label.configure(
+                        text=f"Giá trị hợp lệ: {value:,.0f}",
+                        text_color="green"
+                    )
+                else:
+                    messagebox.showerror(
+                        "Lỗi",
+                        "Số tiền phải lớn hơn hoặc bằng 1,000,000!"
+                    )
+                    self.entry_var.set("")
+                    self.sotiengui_entry.focus()
+            except ValueError:
+                messagebox.showerror(
+                    "Lỗi",
+                    "Vui lòng nhập một số hợp lệ!"
+                )
+                self.entry_var.set("")
+                self.sotiengui_entry.focus()
 
             # Validate minimum deposit amount
             try:
