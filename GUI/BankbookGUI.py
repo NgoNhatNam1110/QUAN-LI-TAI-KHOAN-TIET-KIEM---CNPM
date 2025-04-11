@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from tkinter import messagebox
 import Create_deposit_slip_GUI
 import Create_withdrawal_slip_GUI
 import Lookup_Bankbook_GUI
@@ -95,8 +96,12 @@ class BankbookGUI(ctk.CTk):
         
         loaitk_label = ctk.CTkLabel(row1_frame, text="Loại tiết kiệm:")
         loaitk_label.pack(side="left", padx=5)
-        self.loaitk_entry = ctk.CTkEntry(row1_frame)  # Store as instance variable
-        self.loaitk_entry.pack(side="left", expand=True, fill="x", padx=5)
+        self.selected_option = ctk.StringVar(value="3 tháng")
+        options = ["3 thang", "6 thang", "vo han"]
+        dropdown = ctk.CTkOptionMenu(row1_frame, variable=self.selected_option, text_color="black", fg_color="#F5F5F5", values=options)
+        dropdown.pack(side="left", expand=True, fill="x", pady=5)
+        # self.loaitk_entry = ctk.CTkEntry(row1_frame)  # Store as instance variable
+        # self.loaitk_entry.pack(side="left", expand=True, fill="x", padx=5)
 
         # Row 2
         row2_frame = ctk.CTkFrame(form_frame)
@@ -129,11 +134,21 @@ class BankbookGUI(ctk.CTk):
         # Row 4
         row4_frame = ctk.CTkFrame(form_frame)
         row4_frame.pack(fill="x", padx=10, pady=5)
-        
+        # Row5
+        row5_frame = ctk.CTkFrame(form_frame)
+        row5_frame.pack(fill="x", padx=10, pady=5)
+        row6_frame = ctk.CTkFrame(form_frame)
+        row6_frame.pack(fill="x", padx=10, pady=5)
+
         sotiengui_label = ctk.CTkLabel(row4_frame, text="Số tiền gửi:")
         sotiengui_label.pack(side="left", padx=5)
         self.sotiengui_entry = ctk.CTkEntry(row4_frame)  # Store as instance variable
         self.sotiengui_entry.pack(side="left", expand=True, fill="x", padx=5)
+        self.entry_var = ctk.StringVar()
+        self.submit_btn = ctk.CTkButton(row5_frame, text="submit", command=self.validate_input)
+        self.submit_btn.pack(side="left", expand= True, fill="x", padx=5)
+        self.result_label = ctk.CTkLabel(row6_frame, text="")
+        self.result_label.pack(side="left", expand= True, fill="x", padx=5)
 
         # Buttons frame
         button_frame = ctk.CTkFrame(self.right_frame)
@@ -145,11 +160,35 @@ class BankbookGUI(ctk.CTk):
         cancel_button = ctk.CTkButton(button_frame, text="Huỷ", command=self.clear_bankbook_fields)  # Link to clear fields
         cancel_button.pack(side="left", padx=10)
 
+    def validate_input(self):
+        try:
+            value = float(self.sotiengui_entry.get().replace(",", ""))
+            if value >= 1000000:
+                self.result_label.configure(
+                    text=f"Giá trị hợp lệ: {value:,.0f}",
+                    text_color="green"
+                )
+            else:
+                messagebox.showerror(
+                    "Lỗi",
+                    "Số tiền phải lớn hơn hoặc bằng 1,000,000!"
+                )
+                self.entry_var.set("")
+                self.sotiengui_entry.focus()
+        except ValueError:
+            messagebox.showerror(
+                "Lỗi",
+                "Vui lòng nhập một số hợp lệ!"
+            )
+            self.entry_var.set("")
+            self.sotiengui_entry.focus()
+
+
     def insert_new_record(self):
         try:
             # Gather data from form fields
             maso = self.maso_entry.get()
-            loaitk = self.loaitk_entry.get()
+            # loaitk = self.loaitk_entry.get()
             khachhang = self.khachhang_entry.get()
             cmnd = self.cmnd_entry.get()
             diachi = self.diachi_entry.get()
@@ -177,7 +216,7 @@ class BankbookGUI(ctk.CTk):
         print("Clear button clicked")  # Debugging statement
         try:
             self.maso_entry.delete(0, "end")
-            self.loaitk_entry.delete(0, "end")
+            # self.loaitk_entry.delete(0, "end")
             self.khachhang_entry.delete(0, "end")
             self.cmnd_entry.delete(0, "end")
             self.diachi_entry.delete(0, "end")
