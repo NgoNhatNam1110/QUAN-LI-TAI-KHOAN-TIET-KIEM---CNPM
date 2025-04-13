@@ -1,25 +1,15 @@
 import customtkinter as ctk
 from tkinter import messagebox
+from tkinter import messagebox
 import Create_deposit_slip_GUI
 import Create_withdrawal_slip_GUI
 import Lookup_Bankbook_GUI
 import Prepare_monthly_report_GUI
-from utils.db_utils import DatabaseConnection
-from BUS.BankbookBUS import BankbookBUS
-
-
-
 class BankbookGUI(ctk.CTk):
     def __init__(self, user_id, username, password):
         super().__init__()
 
-        self.user_id = user_id  # Store the user ID
-        self.username = username  # Store the username
-        self.password = password  # Store the password
-        self.db = DatabaseConnection()  # Initialize the database connection utility
-        self.bankbook_bus = BankbookBUS()  # Initialize the business layer
-
-        self.title("BankBook Management")
+        self.title("BankBook Management ")
         self.geometry("800x600")
 
         # Configure grid
@@ -159,12 +149,8 @@ class BankbookGUI(ctk.CTk):
         
         loaitk_label = ctk.CTkLabel(row1_frame, text="Loại tiết kiệm:", **label_style)
         loaitk_label.pack(side="left", padx=5)
-        self.selected_option = ctk.StringVar(value="3 tháng")
-        options = ["3 thang", "6 thang", "vo han"]
-        dropdown = ctk.CTkOptionMenu(row1_frame, variable=self.selected_option, text_color="black", fg_color="#F5F5F5", values=options)
-        dropdown.pack(side="left", expand=True, fill="x", pady=5)
-        # self.loaitk_entry = ctk.CTkEntry(row1_frame)  # Store as instance variable
-        # self.loaitk_entry.pack(side="left", expand=True, fill="x", padx=5)
+        loaitk_entry = ctk.CTkEntry(row1_frame)
+        loaitk_entry.pack(side="left", expand=True, fill="x", padx=5)
 
         # Customer information
         row2_frame = ctk.CTkFrame(form_frame, fg_color="transparent")
@@ -202,20 +188,11 @@ class BankbookGUI(ctk.CTk):
         # Row 4
         row4_frame = ctk.CTkFrame(form_frame)
         row4_frame.pack(fill="x", padx=10, pady=5)
-        # Row 5
-        row5_frame = ctk.CTkFrame(form_frame)
-        row5_frame.pack(fill="x", padx=10, pady=5)
-        # Row 6
-        row6_frame = ctk.CTkFrame(form_frame)
-        row6_frame.pack(fill="x", padx=10, pady=5)
-
-        sotiengui_label = ctk.CTkLabel(row4_frame, text="Số tiền gửi:")
-        sotiengui_label.pack(side="left", padx=5)
-        self.sotiengui_entry = ctk.CTkEntry(row5_frame, **entry_style)
-        self.sotiengui_entry.pack(side="left", expand=True, fill="x", padx=5)
-        self.entry_var = ctk.StringVar()
-        self.result_label = ctk.CTkLabel(row6_frame, text="")
-        self.result_label.pack(side="left", expand= True, fill="x", padx=5)
+        
+        sotiengoi_label = ctk.CTkLabel(row4_frame, text="Số tiền gởi:")
+        sotiengoi_label.pack(side="left", padx=5)
+        sotiengoi_entry = ctk.CTkEntry(row4_frame)
+        sotiengoi_entry.pack(side="left", expand=True, fill="x", padx=5)
 
         # Buttons frame
         button_frame = ctk.CTkFrame(self.right_frame)
@@ -245,79 +222,6 @@ class BankbookGUI(ctk.CTk):
                                      **button_style)
         cancel_button.pack(side="left", padx=10)
 
-    def insert_new_record(self):
-        """Insert a new savings account record"""
-        try:
-            # Get form data
-            maso = self.maso_entry.get()
-            # loaitk = self.loaitk_entry.get()
-            loaitk = self.selected_option.get()
-            khachhang = self.khachhang_entry.get()
-            cmnd = self.cmnd_entry.get()
-            diachi = self.diachi_entry.get()
-            ngaymo = self.ngaymo_entry.get()
-            sotiengui = self.sotiengui_entry.get()
-            
-            # Validate ID number
-            if self.checkCMND(cmnd):
-                messagebox.showerror("Lỗi", "CMND đã tồn tại trong hệ thống!")
-                self.cmnd_entry.focus()
-                return
-            
-            # Validate account number
-            if self.checkmaso(maso):
-                messagebox.showerror("Lỗi", "Mã số đã tồn tại trong hệ thống!")
-                self.maso_entry.focus()
-                return
-            
-            # check if 
-            try:
-                value = float(self.sotiengui_entry.get().replace(",", ""))
-                if value >= 1000000:
-                    self.result_label.configure(
-                        text=f"Giá trị hợp lệ: {value:,.0f}",
-                        text_color="green"
-                    )
-                else:
-                    messagebox.showerror(
-                        "Lỗi",
-                        "Số tiền phải lớn hơn hoặc bằng 1,000,000!"
-                    )
-                    self.entry_var.set("")
-                    self.sotiengui_entry.focus()
-            except ValueError:
-                messagebox.showerror(
-                    "Lỗi",
-                    "Vui lòng nhập một số hợp lệ!"
-                )
-                self.entry_var.set("")
-                self.sotiengui_entry.focus()
-
-            # Call the business layer to insert the record
-            result = self.bankbook_bus.insert_new_record(
-                maso, loaitk, khachhang, cmnd, diachi, ngaymo, sotiengui
-            )
-
-            if result:
-                print("New bankbook record inserted successfully.")
-            else:
-                print("Failed to insert bankbook record.")
-        except Exception as e:
-            print(f"Error inserting data: {e}")
-
-    def clear_bankbook_fields(self):
-        """Clear all form fields"""
-        try:
-            self.maso_entry.delete(0, "end")
-            # self.loaitk_entry.delete(0, "end")
-            self.khachhang_entry.delete(0, "end")
-            self.cmnd_entry.delete(0, "end")
-            self.diachi_entry.delete(0, "end")
-            self.ngaymo_entry.delete(0, "end")
-            self.sotiengui_entry.delete(0, "end")
-        except Exception as e:
-            print(f"Error clearing fields: {e}")
-
     def create_deposit_slip(self):
         """Display deposit slip creation screen"""
         self.clear_right_frame()
@@ -338,33 +242,8 @@ class BankbookGUI(ctk.CTk):
         """Display monthly report generation screen"""
         self.clear_right_frame()
         Prepare_monthly_report_GUI.Prepare_monthly_report_GUI(self.right_frame)
+        Prepare_monthly_report_GUI.Prepare_monthly_report_GUI(self.right_frame)
     
-    def checkCMND(self, cmnd):
-        """Check if ID number already exists"""
-        if cmnd:
-            try:
-                connection = self.db.connect()
-                cursor = connection.cursor()
-                cursor.execute("SELECT COUNT(*) FROM SoTietKiem WHERE CMND = ?", (cmnd,))
-                count = cursor.fetchone()[0]
-                return count > 0
-            except Exception as e:
-                print(f"Error checking ID number: {e}")
-                return False
-        
-    def checkmaso(self, maso):
-        """Check if account number already exists"""
-        if maso:
-            try:
-                connection = self.db.connect()
-                cursor = connection.cursor()
-                cursor.execute("SELECT COUNT(*) FROM SoTietKiem WHERE maSo = ?", (maso,))
-                count = cursor.fetchone()[0]
-                return count > 0
-            except Exception as e:
-                print(f"Error checking account number: {e}")
-                return False        
-
     def change_rules(self):
         """Display rules change screen"""
         self.clear_right_frame()
