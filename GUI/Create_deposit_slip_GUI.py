@@ -1,10 +1,13 @@
 import customtkinter as ctk
 from BUS.Create_deposit_slip_BUS import Create_deposit_slip_BUS
 
+from BUS.Create_deposit_slip_BUS import Create_deposit_slip_BUS
+
 
 class Create_deposit_slip_GUI:
     def __init__(self, parent_frame):
         self.parent_frame = parent_frame
+        self.create_deposit_slip_bus = Create_deposit_slip_BUS()  # Initialize the business layer
         self.create_deposit_slip_bus = Create_deposit_slip_BUS()  # Initialize the business layer
         self.create_screen_deposit_slip()
 
@@ -45,12 +48,16 @@ class Create_deposit_slip_GUI:
         
         maso_label = ctk.CTkLabel(row1_frame, text="Mã số:", **label_style)
         maso_label.pack(side="left", padx=5)
-        self.maso_entry = ctk.CTkEntry(row1_frame, **entry_style)
+        self.maso_entry = ctk.CTkEntry(row1_frame)  # Store as instance variable
+        self.maso_entry.pack(side="left", expand=True, fill="x", padx=5)
+        self.maso_entry = ctk.CTkEntry(row1_frame)  # Store as instance variable
         self.maso_entry.pack(side="left", expand=True, fill="x", padx=5)
         
         khachhang_label = ctk.CTkLabel(row1_frame, text="Khách hàng:", **label_style)
         khachhang_label.pack(side="left", padx=5)
-        self.khachhang_entry = ctk.CTkEntry(row1_frame, **entry_style)
+        self.khachhang_entry = ctk.CTkEntry(row1_frame)  # Store as instance variable
+        self.khachhang_entry.pack(side="left", expand=True, fill="x", padx=5)
+        self.khachhang_entry = ctk.CTkEntry(row1_frame)  # Store as instance variable
         self.khachhang_entry.pack(side="left", expand=True, fill="x", padx=5)
 
         # Row 2
@@ -60,14 +67,18 @@ class Create_deposit_slip_GUI:
         
         ngaygui_label = ctk.CTkLabel(row2_frame, text="Ngày gửi:", **label_style)
         ngaygui_label.pack(side="left", padx=5)
-        self.ngaygui_entry = ctk.CTkEntry(row2_frame, **entry_style)
+        self.ngaygui_entry = ctk.CTkEntry(row2_frame)  # Store as instance variable
+        self.ngaygui_entry.pack(side="left", expand=True, fill="x", padx=5)
+        self.ngaygui_entry = ctk.CTkEntry(row2_frame)  # Store as instance variable
         self.ngaygui_entry.pack(side="left", expand=True, fill="x", padx=5)
         self.ngaygui_entry.insert(0, current_date.strftime("%Y-%m-%d"))
         self.ngaygui_entry.configure(state="readonly")
         
         sotiengui_label = ctk.CTkLabel(row2_frame, text="Số tiền gửi:", **label_style)
         sotiengui_label.pack(side="left", padx=5)
-        self.sotiengui_entry = ctk.CTkEntry(row2_frame, **entry_style)
+        self.sotiengui_entry = ctk.CTkEntry(row2_frame)  # Store as instance variable
+        self.sotiengui_entry.pack(side="left", expand=True, fill="x", padx=5)
+        self.sotiengui_entry = ctk.CTkEntry(row2_frame)  # Store as instance variable
         self.sotiengui_entry.pack(side="left", expand=True, fill="x", padx=5)
 
         # Buttons frame with hover effects
@@ -75,8 +86,10 @@ class Create_deposit_slip_GUI:
         button_frame.pack(pady=20)
         
         save_button = ctk.CTkButton(button_frame, text="Lập phiếu", command=self.deposit_slip_event)
+        save_button = ctk.CTkButton(button_frame, text="Lập phiếu", command=self.deposit_slip_event)
         save_button.pack(side="left", padx=10)
         
+        cancel_button = ctk.CTkButton(button_frame, text="Huỷ", command=self.clear_fields)
         cancel_button = ctk.CTkButton(button_frame, text="Huỷ", command=self.clear_fields)
         cancel_button.pack(side="left", padx=10)
 
