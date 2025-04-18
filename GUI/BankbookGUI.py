@@ -5,10 +5,14 @@ import Create_deposit_slip_GUI
 import Create_withdrawal_slip_GUI
 import Lookup_Bankbook_GUI
 import Prepare_monthly_report_GUI
+
+from utils.db_utils import DatabaseConnection
+from BUS.BankbookBUS import BankbookBUS
+
 class BankbookGUI(ctk.CTk):
     def __init__(self, user_id, username, password):
         super().__init__()
-
+        
         self.title("BankBook Management ")
         self.geometry("800x600")
 
@@ -23,8 +27,15 @@ class BankbookGUI(ctk.CTk):
         # Account information
         self.account_detail_label = ctk.CTkLabel(self.left_frame, text="Account Information :", font=ctk.CTkFont(size=18, weight="bold"))
         self.account_detail_label.pack(pady=20)
+        print("concac")
 
 
+        self.user_id = user_id  # Store the user ID
+        self.username = username  # Store the username
+        self.password = password  # Store the password
+        self.db = DatabaseConnection()  # Initialize the database connection utility
+        self.bankbook_bus = BankbookBUS()  # Initialize the business layer
+        
         self.account_label = ctk.CTkLabel(self.left_frame, text=f"Tài khoản : {self.username}")
         self.account_label.pack(pady=5)
 
@@ -202,8 +213,49 @@ class BankbookGUI(ctk.CTk):
         """Display rules change screen"""
         self.clear_right_frame()
         # Change_rules_GUI.Change_rules_GUI(self.right_frame)
-
     
+    def insert_new_record(self):
+        try:
+            # Gather data from form fields
+            maso = self.maso_entry.get()
+            loaitk = self.loaitk_entry.get()
+            khachhang = self.khachhang_entry.get()
+            cmnd = self.cmnd_entry.get()
+            diachi = self.diachi_entry.get()
+            ngaymo = self.ngaymo_entry.get()
+            sotiengui = self.sotiengui_entry.get()
+
+            # Validate required fields
+            if not (maso and loaitk and khachhang and cmnd and diachi and ngaymo and sotiengui):
+                print("All fields are required.")
+                return
+
+            # Call the business layer to insert the record
+            result = self.bankbook_bus.insert_new_record(
+                maso, loaitk, khachhang, cmnd, diachi, ngaymo, sotiengui
+            )
+
+            if result:
+                print("New bankbook record inserted successfully.")
+            else:
+                print("Failed to insert bankbook record.")
+        except Exception as e:
+            print(f"Error inserting data: {e}")
+
+    def clear_bankbook_fields(self):
+            print("Clear button clicked")  # Debugging statement
+            try:
+                self.maso_entry.delete(0, "end")
+                self.loaitk_entry.delete(0, "end")
+                self.khachhang_entry.delete(0, "end")
+                self.cmnd_entry.delete(0, "end")
+                self.diachi_entry.delete(0, "end")
+                self.ngaymo_entry.delete(0, "end")
+                self.sotiengui_entry.delete(0, "end")
+                print("Fields cleared successfully")  # Debugging statement
+            except Exception as e:
+                print(f"Error clearing fields: {e}")  # Debugging statement
+
 # if __name__ == "__main__":
 #     app = BankbookGUI()
 #     app.mainloop()
