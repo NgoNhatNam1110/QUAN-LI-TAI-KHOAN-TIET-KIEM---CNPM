@@ -3,11 +3,6 @@ import Create_deposit_slip_GUI
 import Create_withdrawal_slip_GUI
 import Lookup_Bankbook_GUI
 import Prepare_monthly_report_GUI
-<<<<<<< HEAD
-import Change_rules
-=======
-
->>>>>>> d40e6778ce36c2546358ada9e93cd287d9057bfe
 from utils.db_utils import DatabaseConnection
 from BUS.BankbookBUS import BankbookBUS
 
