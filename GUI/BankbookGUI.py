@@ -53,7 +53,6 @@ class BankbookGUI(ctk.CTk):
         self.account_label.pack(pady=5)
 
         self.id_account_label = ctk.CTkLabel(self.left_frame, text=f"ID : {self.user_id}")
-        self.id_account_label = ctk.CTkLabel(self.left_frame, text=f"ID : {self.user_id}")
         self.id_account_label.pack(pady=5)
 
         # Các nút chức năng
@@ -107,8 +106,6 @@ class BankbookGUI(ctk.CTk):
         maso_label.pack(side="left", padx=5)
         self.maso_entry = ctk.CTkEntry(row1_frame)  # Store as instance variable
         self.maso_entry.pack(side="left", expand=True, fill="x", padx=5)
-        self.maso_entry = ctk.CTkEntry(row1_frame)  # Store as instance variable
-        self.maso_entry.pack(side="left", expand=True, fill="x", padx=5)
         
         loaitk_label = ctk.CTkLabel(row1_frame, text="Loại tiết kiệm:")
         loaitk_label.pack(side="left", padx=5)
@@ -127,13 +124,9 @@ class BankbookGUI(ctk.CTk):
         khachhang_label.pack(side="left", padx=5)
         self.khachhang_entry = ctk.CTkEntry(row2_frame)  # Store as instance variable
         self.khachhang_entry.pack(side="left", expand=True, fill="x", padx=5)
-        self.khachhang_entry = ctk.CTkEntry(row2_frame)  # Store as instance variable
-        self.khachhang_entry.pack(side="left", expand=True, fill="x", padx=5)
         
         cmnd_label = ctk.CTkLabel(row2_frame, text="CMND:")
         cmnd_label.pack(side="left", padx=5)
-        self.cmnd_entry = ctk.CTkEntry(row2_frame)  # Store as instance variable
-        self.cmnd_entry.pack(side="left", expand=True, fill="x", padx=5)
         self.cmnd_entry = ctk.CTkEntry(row2_frame)  # Store as instance variable
         self.cmnd_entry.pack(side="left", expand=True, fill="x", padx=5)
 
@@ -143,8 +136,6 @@ class BankbookGUI(ctk.CTk):
         
         diachi_label = ctk.CTkLabel(row3_frame, text="Địa chỉ:")
         diachi_label.pack(side="left", padx=5)
-        self.diachi_entry = ctk.CTkEntry(row3_frame)  # Store as instance variable
-        self.diachi_entry.pack(side="left", expand=True, fill="x", padx=5)
         self.diachi_entry = ctk.CTkEntry(row3_frame)  # Store as instance variable
         self.diachi_entry.pack(side="left", expand=True, fill="x", padx=5)
 
