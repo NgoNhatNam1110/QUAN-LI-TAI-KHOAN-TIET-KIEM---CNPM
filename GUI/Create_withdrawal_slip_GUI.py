@@ -1,10 +1,10 @@
 import customtkinter as ctk
-from utils.db_utils import DatabaseConnection
+from BUS.Create_withdrawal_slip_BUS import Create_withdrawal_slip_BUS
 
 class Create_withdrawal_slip_GUI:
     def __init__(self, parent_frame):
         self.parent_frame = parent_frame
-        self.db = DatabaseConnection()  # Initialize the database connection utility
+        self.create_withdrawal_slip_bus = Create_withdrawal_slip_BUS()  # Initialize the business layer
         self.create_screen_withdrawal_slip()
     
     def create_screen_withdrawal_slip(self):
@@ -55,23 +55,34 @@ class Create_withdrawal_slip_GUI:
         cancel_button.pack(side="left", padx=10)
 
     def withdrawal_slip_event(self):
-        print("Save button clicked")
         try:
-            # Example of using the database connection
-            connection = self.db.connect()
-            cursor = connection.cursor()
-            cursor.execute("SELECT * FROM SoTietKiem")
-            print("Data fetched successfully")
+            # Retrieve input values
+            maso = self.maso_entry.get()
+            khachhang = self.khachhang_entry.get()
+            ngayrut = self.ngayrut_entry.get()
+            sotienrut = self.sotienrut_entry.get()
+            
+            # Validate inputs
+            if not maso or not khachhang or not ngayrut or not sotienrut:
+                print("Field(s) cannot be empty")
+                return
+            
+            # Call the business layer to handle the withdrawal slip creation
+            result = self.create_withdrawal_slip_bus.create_withdrawal_slip(maso, khachhang, ngayrut, sotienrut)
+
+            if result:
+                print("Withdrawal slip created successfully.")
+            else:
+                print("Failed to create withdrawal slip.")
         except Exception as e:
-            print(f"Error fetching withdrawal slip data: {e}")
+            print(f"Error during withdrawal slip event: {e}")
 
     def clear_fields(self):
-        print("Clear button clicked")  # Debugging statement
         try:
             self.maso_entry.delete(0, "end")
             self.khachhang_entry.delete(0, "end")
             self.ngayrut_entry.delete(0, "end")
             self.sotienrut_entry.delete(0, "end")
-            print("Fields cleared successfully")  # Debugging statement
+            print("Fields cleared successfully")
         except Exception as e:
-            print(f"Error clearing fields: {e}")  # Debugging statement
+            print(f"Error clearing fields: {e}")

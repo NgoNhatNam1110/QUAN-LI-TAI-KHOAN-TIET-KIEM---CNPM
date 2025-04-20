@@ -1,11 +1,11 @@
 import customtkinter as ctk
-from utils.db_utils import DatabaseConnection
+from BUS.Create_deposit_slip_BUS import Create_deposit_slip_BUS
+
 
 class Create_deposit_slip_GUI:
     def __init__(self, parent_frame):
         self.parent_frame = parent_frame
-        self.db = DatabaseConnection()  # Initialize the database connection utility
-        print(f"Parent frame: {self.parent_frame}")  # Debugging statement
+        self.create_deposit_slip_bus = Create_deposit_slip_BUS()  # Initialize the business layer
         self.create_screen_deposit_slip()
 
     def create_screen_deposit_slip(self):
@@ -49,44 +49,36 @@ class Create_deposit_slip_GUI:
         button_frame = ctk.CTkFrame(self.parent_frame)
         button_frame.pack(pady=20)
         
-        save_button = ctk.CTkButton(button_frame, text="Lập phiếu", command=self.deposit_slip_event)  # Link to deposit_slip_event
+        save_button = ctk.CTkButton(button_frame, text="Lập phiếu", command=self.deposit_slip_event)
         save_button.pack(side="left", padx=10)
         
-        cancel_button = ctk.CTkButton(button_frame, text="Huỷ", command=self.clear_fields)  # Link to cancel_event
+        cancel_button = ctk.CTkButton(button_frame, text="Huỷ", command=self.clear_fields)
         cancel_button.pack(side="left", padx=10)
 
     def deposit_slip_event(self):
-        print("Deposit slip button clicked")
         try:
             # Retrieve input values
             maso = self.maso_entry.get()
             khachhang = self.khachhang_entry.get()
+            ngaygui = self.ngaygui_entry.get()
+            sotiengui = self.sotiengui_entry.get()
 
             # Validate inputs
-            if not maso or not khachhang:
+            if not maso or not khachhang or not ngaygui or not sotiengui:
                 print("Field(s) cannot be empty")
                 return
 
-            # Connect to the database
-            connection = self.db.connect()
-            cursor = connection.cursor()
-
-            # Query the KhachHang table
-            query = "SELECT * FROM KhachHang WHERE maSo = ? AND hoTen = ?"
-            cursor.execute(query, (maso, khachhang))
-            result = cursor.fetchone()
+            # Call the business layer to handle the deposit slip creation
+            result = self.create_deposit_slip_bus.create_deposit_slip(maso, khachhang, ngaygui, sotiengui)
 
             if result:
-                print("Customer exists in the database:", result)
-                # Proceed with further processing (e.g., saving deposit slip)
+                print("Deposit slip created successfully.")
             else:
-                print("Customer not found in the database")
-
+                print("Failed to create deposit slip.")
         except Exception as e:
             print(f"Error during deposit slip event: {e}")
 
     def clear_fields(self):
-        print("Cancel button clicked")
         try:
             self.maso_entry.delete(0, "end")
             self.khachhang_entry.delete(0, "end")

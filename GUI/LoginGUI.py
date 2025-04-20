@@ -1,11 +1,11 @@
 import customtkinter as ctk
 from BankbookGUI import BankbookGUI
-from utils.db_utils import DatabaseConnection  # Import the database connection utility
+from BUS.Login_BUS import Login_BUS  # Import the business layer
 
 class LoginGUI:
     def __init__(self):
-        # Initialize the database connection utility
-        self.db = DatabaseConnection()
+        # Initialize the business layer
+        self.login_bus = Login_BUS()
         
         # Configure appearance
         ctk.set_appearance_mode("dark")
@@ -41,14 +41,8 @@ class LoginGUI:
         password = self.password_entry.get()  # Get the entered password
 
         try:
-            # Connect to the database
-            connection = self.db.connect()
-            cursor = connection.cursor()
-
-            # Query the database for the entered credentials
-            query = "SELECT ID, NAME, PASSWORD FROM Admin WHERE NAME = ? AND PASSWORD = ?"
-            cursor.execute(query, (username, password))
-            result = cursor.fetchone()
+            # Call the business layer to validate login
+            result = self.login_bus.validate_login(username, password)
 
             if result:  # If a matching record is found
                 user_id, username, password = result  # Extract ID, username, and password
@@ -67,8 +61,3 @@ class LoginGUI:
         
     def run(self):
         self.window.mainloop()
-
-# Create and run the application
-# if __name__ == "__main__":
-#     app = LoginGUI()
-#     app.run()
