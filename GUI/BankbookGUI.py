@@ -191,7 +191,7 @@ class BankbookGUI(ctk.CTk):
 
         sotiengui_label = ctk.CTkLabel(row5_frame, text="Số tiền gửi:")
         sotiengui_label.pack(side="left", padx=5)
-        self.sotiengui_entry = ctk.CTkEntry(row4_frame)  # Store as instance variable
+        self.sotiengui_entry = ctk.CTkEntry(row5_frame)  # Store as instance variable
         self.sotiengui_entry.pack(side="left", expand=True, fill="x", padx=5)
         self.entry_var = ctk.StringVar()
         
