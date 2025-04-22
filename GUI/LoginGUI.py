@@ -36,6 +36,7 @@ class LoginGUI:
         self.login_button = ctk.CTkButton(master=self.frame, text="Login", command=self.login_event)
         self.login_button.pack(pady=12, padx=10)
 
+
     def login_event(self):
         username = self.username_entry.get()  # Get the entered username
         password = self.password_entry.get()  # Get the entered password
