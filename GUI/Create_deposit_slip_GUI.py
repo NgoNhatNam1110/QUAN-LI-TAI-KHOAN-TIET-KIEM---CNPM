@@ -11,6 +11,7 @@ class Create_deposit_slip_GUI:
     def __init__(self, parent_frame):
         self.parent_frame = parent_frame
         self.create_deposit_slip_bus = Create_deposit_slip_BUS()  # Initialize the business layer
+        self.create_deposit_slip_bus = Create_deposit_slip_BUS()  # Initialize the business layer
         self.create_screen_deposit_slip()
 
     def create_screen_deposit_slip(self):
@@ -67,8 +68,10 @@ class Create_deposit_slip_GUI:
         
         save_button = ctk.CTkButton(button_frame, text="Lập phiếu", command=self.deposit_slip_event)
         save_button = ctk.CTkButton(button_frame, text="Lập phiếu", command=self.deposit_slip_event)
+        save_button = ctk.CTkButton(button_frame, text="Lập phiếu", command=self.deposit_slip_event)
         save_button.pack(side="left", padx=10)
         
+        cancel_button = ctk.CTkButton(button_frame, text="Huỷ", command=self.clear_fields)
         cancel_button = ctk.CTkButton(button_frame, text="Huỷ", command=self.clear_fields)
         cancel_button = ctk.CTkButton(button_frame, text="Huỷ", command=self.clear_fields)
         cancel_button.pack(side="left", padx=10)

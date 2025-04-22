@@ -3,6 +3,10 @@ from tkinter import messagebox
 from datetime import datetime
 from tkcalendar import Calendar
 import tkinter as tk
+from tkinter import messagebox
+from datetime import datetime
+from tkcalendar import Calendar
+import tkinter as tk
 import Create_deposit_slip_GUI
 import Create_withdrawal_slip_GUI
 import Lookup_Bankbook_GUI
@@ -14,6 +18,14 @@ from BUS.BankbookBUS import BankbookBUS
 class BankbookGUI(ctk.CTk):
     def __init__(self, user_id, username, password):
         super().__init__()
+
+        self.user_id = user_id  # Store the user ID
+        self.username = username  # Store the username
+        self.password = password  # Store the password
+        self.db = DatabaseConnection()  # Initialize the database connection utility
+        self.bankbook_bus = BankbookBUS()  # Initialize the business layer
+
+        self.title("BankBook Management")
 
         self.user_id = user_id  # Store the user ID
         self.username = username  # Store the username
@@ -46,6 +58,7 @@ class BankbookGUI(ctk.CTk):
         # Account information
         self.account_detail_label = ctk.CTkLabel(self.left_frame, text="Account Information :", font=ctk.CTkFont(size=18, weight="bold"))
         self.account_detail_label.pack(pady=20)
+
 
 
         self.account_label = ctk.CTkLabel(self.left_frame, text=f"Tài khoản : {self.username}")
@@ -89,6 +102,7 @@ class BankbookGUI(ctk.CTk):
         self.clear_right_frame()
 
 
+
         # Title
         title_label = ctk.CTkLabel(self.right_frame, text="Mở Sổ Tiết Kiệm", font=ctk.CTkFont(size=20, weight="bold"))
         title_label.pack(pady=20)
@@ -108,6 +122,12 @@ class BankbookGUI(ctk.CTk):
         
         loaitk_label = ctk.CTkLabel(row1_frame, text="Loại tiết kiệm:")
         loaitk_label.pack(side="left", padx=5)
+        self.selected_option = ctk.StringVar(value="3 tháng")
+        options = ["3 thang", 
+                   "6 thang", 
+                   "vo han"]
+        dropdown = ctk.CTkOptionMenu(row1_frame, variable=self.selected_option, text_color="black", fg_color="#F5F5F5", values=options)
+        dropdown.pack(side="left", expand=True, fill="x", pady=5)
         self.selected_option = ctk.StringVar(value="3 tháng")
         options = ["3 thang", 
                    "6 thang", 
@@ -182,7 +202,10 @@ class BankbookGUI(ctk.CTk):
         sotiengui_label = ctk.CTkLabel(row5_frame, text="Số tiền gửi:")
         sotiengui_label.pack(side="left", padx=5)
         self.sotiengui_entry = ctk.CTkEntry(row5_frame)  # Store as instance variable
+        self.sotiengui_entry = ctk.CTkEntry(row5_frame)  # Store as instance variable
         self.sotiengui_entry.pack(side="left", expand=True, fill="x", padx=5)
+        self.entry_var = ctk.StringVar()
+        
         self.entry_var = ctk.StringVar()
         
         # Buttons frame
@@ -191,8 +214,10 @@ class BankbookGUI(ctk.CTk):
         
         save_button = ctk.CTkButton(button_frame, text="Lưu", command=self.insert_new_record)
         save_button = ctk.CTkButton(button_frame, text="Lưu", command=self.insert_new_record)
+        save_button = ctk.CTkButton(button_frame, text="Lưu", command=self.insert_new_record)
         save_button.pack(side="left", padx=10)
         
+        cancel_button = ctk.CTkButton(button_frame, text="Huỷ", command=self.clear_bankbook_fields)  # Link to clear fields
         cancel_button = ctk.CTkButton(button_frame, text="Huỷ", command=self.clear_bankbook_fields)  # Link to clear fields
         cancel_button = ctk.CTkButton(button_frame, text="Huỷ", command=self.clear_bankbook_fields)  # Link to clear fields
         cancel_button.pack(side="left", padx=10)
@@ -202,11 +227,13 @@ class BankbookGUI(ctk.CTk):
             # Gather data from form fields
             maso = self.maso_entry.get()
             loaitk = self.selected_option.get()
+            loaitk = self.selected_option.get()
             khachhang = self.khachhang_entry.get()
             cmnd = self.cmnd_entry.get()
             diachi = self.diachi_entry.get()
             ngaymo = self.ngaymo_entry.get()
             sotiengui = self.sotiengui_entry.get()
+            
             
             # Validate required fields
             # if not ( maso and loaitk and khachhang and cmnd and diachi and ngaymo and sotiengui ):
@@ -261,6 +288,13 @@ class BankbookGUI(ctk.CTk):
                 print("Failed to insert bankbook record.")
         except Exception as e:
             print(f"Error inserting data: {e}")
+
+    def update_selected_date(self, event=None):
+        selected_date = self.calendar.get_date()
+        date_obj = datetime.strptime(selected_date, '%m/%d/%y')
+        formatted_date = date_obj.strftime("%d/%m/%Y")
+        self.ngaymo_entry.delete(0, 'end')
+        self.ngaymo_entry.insert(0, formatted_date)
 
     def update_selected_date(self, event=None):
         selected_date = self.calendar.get_date()

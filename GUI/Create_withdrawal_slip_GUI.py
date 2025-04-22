@@ -63,8 +63,10 @@ class Create_withdrawal_slip_GUI:
         
         save_button = ctk.CTkButton(button_frame, text="Lập phiếu", command=self.withdrawal_slip_event)
         save_button = ctk.CTkButton(button_frame, text="Lập phiếu", command=self.withdrawal_slip_event)
+        save_button = ctk.CTkButton(button_frame, text="Lập phiếu", command=self.withdrawal_slip_event)
         save_button.pack(side="left", padx=10)
         
+        cancel_button = ctk.CTkButton(button_frame, text="Huỷ", command=self.clear_fields)  # Link to clear fields
         cancel_button = ctk.CTkButton(button_frame, text="Huỷ", command=self.clear_fields)  # Link to clear fields
         cancel_button = ctk.CTkButton(button_frame, text="Huỷ", command=self.clear_fields)  # Link to clear fields
         cancel_button.pack(side="left", padx=10)
