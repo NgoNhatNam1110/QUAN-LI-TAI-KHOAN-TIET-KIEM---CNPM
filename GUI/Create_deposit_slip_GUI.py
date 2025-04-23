@@ -3,7 +3,6 @@ from tkinter import messagebox
 from datetime import datetime
 from tkcalendar import Calendar
 from BUS.Create_deposit_slip_BUS import Create_deposit_slip_BUS
-
 from BUS.Create_deposit_slip_BUS import Create_deposit_slip_BUS
 
 
