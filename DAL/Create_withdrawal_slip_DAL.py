@@ -49,7 +49,7 @@ class Create_withdrawal_slip_DAL:
                 WHERE maSo = ?;
                 """
                 cursor.execute(update_sodu_query, (sotienrut, maso))
-
+                
                 # Commit the transaction
                 connection.commit()
                 return True

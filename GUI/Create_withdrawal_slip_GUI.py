@@ -91,9 +91,12 @@ class Create_withdrawal_slip_GUI:
             result = self.create_withdrawal_slip_bus.create_withdrawal_slip(maso, khachhang, ngayrut, sotienrut)
 
             if result:
-                print("Withdrawal slip created successfully.")
+                messagebox.showinfo("Success","Lập phiếu rút tiền thành công!")
             else:
-                print("Failed to create withdrawal slip.")
+                messagebox.showerror(
+                    "Error",
+                    "Vui lòng nhập đúng thông tin dữ liệu!"
+                )
         except Exception as e:
             print(f"Error during withdrawal slip event: {e}")
 
