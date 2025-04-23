@@ -3,6 +3,7 @@ from tkinter import messagebox
 from datetime import datetime
 from tkcalendar import Calendar
 import tkinter as tk
+import Change_rules_GUI
 import Create_deposit_slip_GUI
 import Create_withdrawal_slip_GUI
 import Lookup_Bankbook_GUI
@@ -24,7 +25,8 @@ class BankbookGUI(ctk.CTk):
 
         # Configure window
         self.title("Quản Lý Sổ Tiết Kiệm")
-        self.geometry("1200x800")
+        # self.geometry("800x600")
+        self.geometry("1200x800") 
 
         # Configure grid
         self.grid_rowconfigure(0, weight=1)
@@ -321,6 +323,7 @@ class BankbookGUI(ctk.CTk):
     def lookup_bankbook(self):
         """Display account lookup screen"""
         self.clear_right_frame()
+        # self.geometry("1200x800")  # Resize window for lookup screen
         Lookup_Bankbook_GUI.Lookup_Bankbook_GUI(self.right_frame)
     
     def prepare_monthly_report(self):
@@ -357,7 +360,7 @@ class BankbookGUI(ctk.CTk):
     def change_rules(self):
         """Display rules change screen"""
         self.clear_right_frame()
-        Change_rules_GUI.Change_rules_GUI(self.right_frame)
+        Change_rules_GUI.Change_rules_GUI()
 
     
 # if __name__ == "__main__":
