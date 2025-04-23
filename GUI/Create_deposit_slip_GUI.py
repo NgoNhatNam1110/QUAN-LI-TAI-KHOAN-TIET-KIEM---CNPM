@@ -87,7 +87,7 @@ class Create_deposit_slip_GUI:
             # Validate inputs
             if not maso or not khachhang or not ngaygui or not sotiengui:
                 messagebox.showerror(
-                    "Lỗi",
+                    "Error",
                     "Vui lòng nhập đầy đủ các trường dữ liệu"
                 )
                 return
@@ -96,9 +96,12 @@ class Create_deposit_slip_GUI:
             result = self.create_deposit_slip_bus.create_deposit_slip(maso, khachhang, ngaygui, sotiengui)
 
             if result:
-                print("Deposit slip created successfully.")
+                messagebox.showinfo("Success","Lập phiếu gửi tiền thành công!")
             else:
-                print("Failed to create deposit slip.")
+                messagebox.showerror(
+                    "Error",
+                    "Vui lòng nhập đúng thông tin dữ liệu!"
+                )
         except Exception as e:
             print(f"Error during deposit slip event: {e}")
 

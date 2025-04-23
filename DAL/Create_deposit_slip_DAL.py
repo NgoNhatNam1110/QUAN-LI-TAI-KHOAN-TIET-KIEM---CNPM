@@ -1,6 +1,6 @@
 import uuid
 from utils.db_utils import DatabaseConnection
-
+from tkinter import messagebox
 class Create_deposit_slip_DAL:
     def __init__(self):
         self.db = DatabaseConnection()
@@ -47,7 +47,7 @@ class Create_deposit_slip_DAL:
                 connection.commit()
                 return True
             else:
-                print("Bankbook not found or customer name does not match")
+                messagebox.showerror("Error","Không tìm thấy sổ tiết kiệm hoặc tên khách hàng!")
                 return False
 
         except Exception as e:

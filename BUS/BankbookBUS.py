@@ -10,7 +10,7 @@ class BankbookBUS:
             # Perform any necessary business logic or validation here
             if not maso or not loaitk or not khachhang or not cmnd or not diachi or not ngaymo or not sotiengui:
                 messagebox.showerror(
-                    "Lỗi",
+                    "Error",
                     "Vui lòng nhập đầy đủ các trường dữ liệu"
                 )
                 return False

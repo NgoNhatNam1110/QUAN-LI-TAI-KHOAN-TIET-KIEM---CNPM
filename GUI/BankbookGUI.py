@@ -123,17 +123,12 @@ class BankbookGUI(ctk.CTk):
         loaitk_label = ctk.CTkLabel(row1_frame, text="Loại tiết kiệm:")
         loaitk_label.pack(side="left", padx=5)
         self.selected_option = ctk.StringVar(value="3 tháng")
-        options = ["3 thang", 
-                   "6 thang", 
-                   "vo han"]
+        options = ["3 tháng", 
+                   "6 tháng", 
+                   "Không kỳ hạn"]
         dropdown = ctk.CTkOptionMenu(row1_frame, variable=self.selected_option, text_color="black", fg_color="#F5F5F5", values=options)
         dropdown.pack(side="left", expand=True, fill="x", pady=5)
         self.selected_option = ctk.StringVar(value="3 tháng")
-        options = ["3 thang", 
-                   "6 thang", 
-                   "vo han"]
-        dropdown = ctk.CTkOptionMenu(row1_frame, variable=self.selected_option, text_color="black", fg_color="#F5F5F5", values=options)
-        dropdown.pack(side="left", expand=True, fill="x", pady=5)
 
         # Row 2
         row2_frame = ctk.CTkFrame(form_frame)
