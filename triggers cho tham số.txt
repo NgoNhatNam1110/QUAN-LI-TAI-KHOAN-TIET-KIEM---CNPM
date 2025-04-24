@@ -1,0 +1,65 @@
+ALTER TABLE SoTietKiem
+ADD COLUMN autoRenew INTEGER DEFAULT 0;
+
+DROP TRIGGER IF EXISTS update_soDu_after_insert;
+CREATE TRIGGER update_soDu_after_insert
+AFTER INSERT ON SoTietKiem
+FOR EACH ROW
+WHEN (
+    julianday('now') - julianday(NEW.ngayMoSo) >= 
+    (SELECT thoiGianGuiToiThieu FROM LoaiTietKiem WHERE LoaiTietKiem.loaiTietKiem = NEW.loaiTietKiem)
+    AND NEW.loaiTietKiem != 'Không kỳ hạn'
+)
+BEGIN
+    UPDATE SoTietKiem
+    SET soDu = NEW.soTienGui + 
+               (NEW.soTienGui * (SELECT laiSuat FROM LoaiTietKiem WHERE LoaiTietKiem.loaiTietKiem = NEW.loaiTietKiem) * 
+                (SELECT kyHan FROM LoaiTietKiem WHERE LoaiTietKiem.loaiTietKiem = NEW.loaiTietKiem)) + 
+               (NEW.soTienGui * (SELECT laiSuat FROM LoaiTietKiem WHERE LoaiTietKiem.loaiTietKiem = 'Không kỳ hạn') * 
+                ((julianday('now') - julianday(NEW.ngayMoSo)) / 30 - 
+                 (SELECT kyHan FROM LoaiTietKiem WHERE LoaiTietKiem.loaiTietKiem = NEW.loaiTietKiem)))
+    WHERE maSo = NEW.maSo;
+END;
+
+DROP TRIGGER IF EXISTS update_soDu_after_update;
+CREATE TRIGGER update_soDu_after_update
+AFTER UPDATE ON SoTietKiem
+FOR EACH ROW
+WHEN (
+    julianday('now') - julianday(NEW.ngayMoSo) >= 
+    (SELECT thoiGianGuiToiThieu FROM LoaiTietKiem WHERE LoaiTietKiem.loaiTietKiem = NEW.loaiTietKiem)
+    AND NEW.loaiTietKiem != 'Không kỳ hạn'
+)
+BEGIN
+    UPDATE SoTietKiem
+    SET soDu = NEW.soTienGui + 
+               (NEW.soTienGui * (SELECT laiSuat FROM LoaiTietKiem WHERE LoaiTietKiem.loaiTietKiem = NEW.loaiTietKiem) * 
+                (SELECT kyHan FROM LoaiTietKiem WHERE LoaiTietKiem.loaiTietKiem = NEW.loaiTietKiem)) + 
+               (NEW.soTienGui * (SELECT laiSuat FROM LoaiTietKiem WHERE LoaiTietKiem.loaiTietKiem = 'Không kỳ hạn') * 
+                ((julianday('now') - julianday(NEW.ngayMoSo)) / 30 - 
+                 (SELECT kyHan FROM LoaiTietKiem WHERE LoaiTietKiem.loaiTietKiem = NEW.loaiTietKiem)))
+    WHERE maSo = NEW.maSo;
+END;
+
+DROP TRIGGER IF EXISTS default_to_non_term_savings;
+CREATE TRIGGER default_to_non_term_savings
+AFTER UPDATE ON SoTietKiem
+FOR EACH ROW
+WHEN (
+    julianday('now') - julianday(NEW.ngayMoSo) >= 
+    (SELECT thoiGianGuiToiThieu FROM LoaiTietKiem WHERE LoaiTietKiem.loaiTietKiem = NEW.loaiTietKiem)
+    AND NEW.loaiTietKiem != 'Không kỳ hạn'
+    AND NEW.autoRenew = 0
+)
+BEGIN
+    UPDATE SoTietKiem
+    SET 
+        loaiTietKiem = 'Không kỳ hạn', -- Change to Không kỳ hạn savings
+        soDu = NEW.soTienGui + 
+               (NEW.soTienGui * (SELECT laiSuat FROM LoaiTietKiem WHERE LoaiTietKiem.loaiTietKiem = NEW.loaiTietKiem) * 
+                (SELECT kyHan FROM LoaiTietKiem WHERE LoaiTietKiem.loaiTietKiem = NEW.loaiTietKiem)) + 
+               (NEW.soTienGui * (SELECT laiSuat FROM LoaiTietKiem WHERE LoaiTietKiem.loaiTietKiem = 'Không kỳ hạn') * 
+                ((julianday('now') - julianday(NEW.ngayMoSo)) / 30 - 
+                 (SELECT kyHan FROM LoaiTietKiem WHERE LoaiTietKiem.loaiTietKiem = NEW.loaiTietKiem)))
+    WHERE maSo = NEW.maSo;
+END;
