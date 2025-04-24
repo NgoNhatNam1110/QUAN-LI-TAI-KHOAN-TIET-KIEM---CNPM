@@ -360,7 +360,7 @@ class BankbookGUI(ctk.CTk):
     def change_rules(self):
         """Display rules change screen"""
         self.clear_right_frame()
-        Change_rules_GUI.Change_rules_GUI()
+        Change_rules_GUI.Change_rules_GUI(self.right_frame)
 
     
 # if __name__ == "__main__":
