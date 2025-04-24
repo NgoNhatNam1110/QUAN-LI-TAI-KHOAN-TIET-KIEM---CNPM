@@ -2,7 +2,7 @@ import sys
 import os
 # Add the parent directory to system path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-# Now import from DAL directory
+# Import from DAL directory
 from DAL.Prepare_monthly_report_DAL import Prepare_monthly_report_DAL
 
 
@@ -13,10 +13,10 @@ class Prepare_monthly_report_BUS:
         
     def load_bankbook_to_table(self, date):
         """
-        Load bankbook data for monthly report through the DAL layer
+        Load transaction data for daily report
         
         Args:
-            date (str): The date to get report data for in YYYY-MM-DD format
+            date (str): Date in YYYY-MM-DD format
             
         Returns:
             list: List of dictionaries containing report data
@@ -28,10 +28,10 @@ class Prepare_monthly_report_BUS:
                 print("Invalid date format. Expected YYYY-MM-DD")
                 return None
                 
-            # Call the DAL layer method to get the data
+            # Get data from DAL layer
             result = self.Prepare_monthly_report_DAL.load_bankbook_to_table(date)
             return result
+            
         except Exception as e:
-            # Log the error if needed
-            print(f"Error in BUS layer while loading bankbook data: {str(e)}")
+            print(f"Error in BUS layer while loading data: {str(e)}")
             return None
