@@ -16,7 +16,7 @@ class Prepare_monthly_report_BUS:
         Load transaction data for daily report
         
         Args:
-            date (str): Date in DD/MM/YYYY format
+            date (str): Date in YYYY-MM-DD format
             
         Returns:
             list: List of dictionaries containing report data
@@ -24,8 +24,8 @@ class Prepare_monthly_report_BUS:
         """
         try:
             # Basic date format validation
-            if not date or len(date.split('/')) != 3:
-                print("Invalid date format. Expected DD/MM/YYYY")
+            if not date or len(date.split('-')) != 3:
+                print("Invalid date format. Expected YYYY-MM-DD")
                 return None
                 
             # Get data from DAL layer

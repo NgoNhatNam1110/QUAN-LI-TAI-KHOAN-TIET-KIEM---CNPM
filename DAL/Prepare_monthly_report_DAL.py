@@ -9,7 +9,7 @@ class Prepare_monthly_report_DAL:
         self.cursor = self.connection.cursor()
 
     def load_bankbook_to_table(self, date):
-        try:
+        try: 
             print(f"Executing query with date: {date}")
             
             # Check total transactions in database
@@ -21,7 +21,7 @@ class Prepare_monthly_report_DAL:
             # Get transaction details for debugging
             transaction_query = """
                 SELECT gd.maSo, gd.loaiGiaoDich, gd.soTien, gd.ngayGiaoDich,
-                       stk.loaiTietKiem
+                       stk.loaiTietKiem, stk.hoTen
                 FROM GiaoDich gd
                 LEFT JOIN SoTietKiem stk ON gd.maSo = stk.maSo
                 WHERE gd.ngayGiaoDich = ?
@@ -35,6 +35,7 @@ class Prepare_monthly_report_DAL:
                 print(f"SoTien: {transaction[2]}")
                 print(f"NgayGiaoDich: {transaction[3]}")
                 print(f"LoaiTietKiem: {transaction[4]}")
+                print(f"KhachHang: {transaction[5]}")
             else:
                 print("No transaction found for the given date")
             

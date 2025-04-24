@@ -1,6 +1,7 @@
 from utils.db_utils import DatabaseConnection
 import sqlite3
 from datetime import datetime
+import math  # Import math for rounding up
 
 class Lookup_Bankbook_DAL:
     def __init__(self):
@@ -20,8 +21,7 @@ class Lookup_Bankbook_DAL:
                 loaiTietKiem AS LoaiTietKiem,              -- Matches "Loại Tiết Kiệm" header
                 hoTen AS KhachHang,                        -- Matches "Khách Hàng" header
                 soDu AS SoDu                               -- Matches "Số Dư" header
-            FROM SoTietKiem s
-            JOIN KhachHang k ON s.maKhachHang = k.maKhachHang
+            FROM SoTietKiem
             """
             cursor.execute(query)
             rows = cursor.fetchall()
@@ -34,7 +34,7 @@ class Lookup_Bankbook_DAL:
                     "MaSo": row[1],
                     "LoaiTietKiem": row[2],
                     "KhachHang": row[3],
-                    "SoDu": row[4]
+                    "SoDu": math.ceil(row[4])  # Round up soDu
                 })
 
             return result
@@ -103,7 +103,7 @@ class Lookup_Bankbook_DAL:
                     "MaSo": row[1],
                     "LoaiTietKiem": row[2],
                     "KhachHang": row[3],
-                    "SoDu": row[4]
+                    "SoDu": math.ceil(row[4])  # Round up soDu
                 })
             
             return result

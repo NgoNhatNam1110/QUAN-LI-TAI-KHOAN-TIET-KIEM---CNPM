@@ -7,24 +7,6 @@ def add_sample_data():
         conn = sqlite3.connect('db.db')
         cursor = conn.cursor()
 
-        # Add sample savings types
-        cursor.execute("""
-            INSERT OR IGNORE INTO LoaiTietKiem (loaiTietKiem, kyHan, laiSuat) 
-            VALUES 
-                ('Không kỳ hạn', 0, 0.5),
-                ('3 tháng', 3, 4.5),
-                ('6 tháng', 6, 5.0),
-                ('12 tháng', 12, 6.0)
-        """)
-
-        # Add sample transaction types
-        cursor.execute("""
-            INSERT OR IGNORE INTO LoaiGiaoDich (loaiGiaoDich, moTa) 
-            VALUES 
-                ('Gửi tiền', 'Gửi tiền vào sổ tiết kiệm'),
-                ('Rút tiền', 'Rút tiền từ sổ tiết kiệm'),
-                ('Tất toán', 'Tất toán sổ tiết kiệm')
-        """)
 
         # Add sample savings accounts
         today = datetime.now()
@@ -33,7 +15,7 @@ def add_sample_data():
              (today - timedelta(days=60)).strftime('%Y-%m-%d'), 10000000, 'Hà Nội'),
             ('STK002', 'Trần Thị B', '987654321', '6 tháng', 20000000, 
              (today - timedelta(days=30)).strftime('%Y-%m-%d'), 20000000, 'Hồ Chí Minh'),
-            ('STK003', 'Lê Văn C', '456789123', '12 tháng', 50000000, 
+            ('STK003', 'Lê Văn C', '456789123', '3 tháng', 50000000, 
              today.strftime('%Y-%m-%d'), 50000000, 'Đà Nẵng'),
             ('STK004', 'Phạm Thị D', '789123456', 'Không kỳ hạn', 15000000, 
              (today - timedelta(days=90)).strftime('%Y-%m-%d'), 15000000, 'Hải Phòng'),
@@ -49,15 +31,15 @@ def add_sample_data():
 
         # Add sample transactions
         sample_transactions = [
-            ('GD001', 'STK001', 'Gửi tiền', 10000000, 
+            ('GD001', 'STK001', 'GuiTien', 10000000, 
              (today - timedelta(days=60)).strftime('%Y-%m-%d')),
-            ('GD002', 'STK002', 'Gửi tiền', 20000000, 
+            ('GD002', 'STK002', 'GuiTien', 20000000, 
              (today - timedelta(days=30)).strftime('%Y-%m-%d')),
-            ('GD003', 'STK003', 'Gửi tiền', 50000000, 
+            ('GD003', 'STK003', 'GuiTien', 50000000, 
              today.strftime('%Y-%m-%d')),
-            ('GD004', 'STK004', 'Gửi tiền', 15000000, 
+            ('GD004', 'STK004', 'GuiTien', 15000000, 
              (today - timedelta(days=90)).strftime('%Y-%m-%d')),
-            ('GD005', 'STK005', 'Gửi tiền', 30000000, 
+            ('GD005', 'STK005', 'GuiTien', 30000000, 
              (today - timedelta(days=15)).strftime('%Y-%m-%d'))
         ]
 
@@ -66,18 +48,6 @@ def add_sample_data():
             (maGiaoDich, maSo, loaiGiaoDich, soTien, ngayGiaoDich)
             VALUES (?, ?, ?, ?, ?)
         """, sample_transactions)
-
-        # Add sample parameters
-        cursor.execute("""
-            INSERT OR IGNORE INTO ThamSo 
-            (maQuyDinh, loaiTietKiem, tienGuiToiThieu, kyHan, laiSuat, quyDinhKhac)
-            VALUES 
-                ('QD001', 'Không kỳ hạn', 1000000, 0, 0.5, 'Không có kỳ hạn'),
-                ('QD002', '3 tháng', 1000000, 3, 4.5, 'Kỳ hạn 3 tháng'),
-                ('QD003', '6 tháng', 1000000, 6, 5.0, 'Kỳ hạn 6 tháng'),
-                ('QD004', '12 tháng', 1000000, 12, 6.0, 'Kỳ hạn 12 tháng')
-        """)
-
         # Commit changes
         conn.commit()
         print("Sample data added successfully!")
