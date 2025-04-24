@@ -48,9 +48,13 @@ class Create_withdrawal_slip_GUI:
         self.maso_entry.pack(side="left", expand=True, fill="x", padx=5)
         self.maso_entry = ctk.CTkEntry(row1_frame)  # Store as instance variable
         self.maso_entry.pack(side="left", expand=True, fill="x", padx=5)
+        self.maso_entry = ctk.CTkEntry(row1_frame)  # Store as instance variable
+        self.maso_entry.pack(side="left", expand=True, fill="x", padx=5)
         
         khachhang_label = ctk.CTkLabel(row1_frame, text="Khách hàng:", **label_style)
         khachhang_label.pack(side="left", padx=5)
+        self.khachhang_entry = ctk.CTkEntry(row1_frame)  # Store as instance variable
+        self.khachhang_entry.pack(side="left", expand=True, fill="x", padx=5)
         self.khachhang_entry = ctk.CTkEntry(row1_frame)  # Store as instance variable
         self.khachhang_entry.pack(side="left", expand=True, fill="x", padx=5)
         self.khachhang_entry = ctk.CTkEntry(row1_frame)  # Store as instance variable
@@ -76,6 +80,8 @@ class Create_withdrawal_slip_GUI:
         self.sotienrut_entry.pack(side="left", expand=True, fill="x", padx=5)
         self.sotienrut_entry = ctk.CTkEntry(row2_frame)  # Store as instance variable
         self.sotienrut_entry.pack(side="left", expand=True, fill="x", padx=5)
+        self.sotienrut_entry = ctk.CTkEntry(row2_frame)  # Store as instance variable
+        self.sotienrut_entry.pack(side="left", expand=True, fill="x", padx=5)
 
         # Buttons frame with hover effects
         button_frame = ctk.CTkFrame(self.parent_frame, fg_color="transparent")
@@ -83,8 +89,10 @@ class Create_withdrawal_slip_GUI:
         
         save_button = ctk.CTkButton(button_frame, text="Lập phiếu", command=self.withdrawal_slip_event)
         save_button = ctk.CTkButton(button_frame, text="Lập phiếu", command=self.withdrawal_slip_event)
+        save_button = ctk.CTkButton(button_frame, text="Lập phiếu", command=self.withdrawal_slip_event)
         save_button.pack(side="left", padx=10)
         
+        cancel_button = ctk.CTkButton(button_frame, text="Huỷ", command=self.clear_fields)  # Link to clear fields
         cancel_button = ctk.CTkButton(button_frame, text="Huỷ", command=self.clear_fields)  # Link to clear fields
         cancel_button = ctk.CTkButton(button_frame, text="Huỷ", command=self.clear_fields)  # Link to clear fields
         cancel_button.pack(side="left", padx=10)

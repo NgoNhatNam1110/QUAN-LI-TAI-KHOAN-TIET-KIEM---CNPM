@@ -3,10 +3,13 @@ from BUS.Create_deposit_slip_BUS import Create_deposit_slip_BUS
 
 from BUS.Create_deposit_slip_BUS import Create_deposit_slip_BUS
 
+from BUS.Create_deposit_slip_BUS import Create_deposit_slip_BUS
+
 
 class Create_deposit_slip_GUI:
     def __init__(self, parent_frame):
         self.parent_frame = parent_frame
+        self.create_deposit_slip_bus = Create_deposit_slip_BUS()  # Initialize the business layer
         self.create_deposit_slip_bus = Create_deposit_slip_BUS()  # Initialize the business layer
         self.create_deposit_slip_bus = Create_deposit_slip_BUS()  # Initialize the business layer
         self.create_screen_deposit_slip()
@@ -52,9 +55,13 @@ class Create_deposit_slip_GUI:
         self.maso_entry.pack(side="left", expand=True, fill="x", padx=5)
         self.maso_entry = ctk.CTkEntry(row1_frame)  # Store as instance variable
         self.maso_entry.pack(side="left", expand=True, fill="x", padx=5)
+        self.maso_entry = ctk.CTkEntry(row1_frame)  # Store as instance variable
+        self.maso_entry.pack(side="left", expand=True, fill="x", padx=5)
         
         khachhang_label = ctk.CTkLabel(row1_frame, text="Khách hàng:", **label_style)
         khachhang_label.pack(side="left", padx=5)
+        self.khachhang_entry = ctk.CTkEntry(row1_frame)  # Store as instance variable
+        self.khachhang_entry.pack(side="left", expand=True, fill="x", padx=5)
         self.khachhang_entry = ctk.CTkEntry(row1_frame)  # Store as instance variable
         self.khachhang_entry.pack(side="left", expand=True, fill="x", padx=5)
         self.khachhang_entry = ctk.CTkEntry(row1_frame)  # Store as instance variable
@@ -80,6 +87,8 @@ class Create_deposit_slip_GUI:
         self.sotiengui_entry.pack(side="left", expand=True, fill="x", padx=5)
         self.sotiengui_entry = ctk.CTkEntry(row2_frame)  # Store as instance variable
         self.sotiengui_entry.pack(side="left", expand=True, fill="x", padx=5)
+        self.sotiengui_entry = ctk.CTkEntry(row2_frame)  # Store as instance variable
+        self.sotiengui_entry.pack(side="left", expand=True, fill="x", padx=5)
 
         # Buttons frame with hover effects
         button_frame = ctk.CTkFrame(self.parent_frame, fg_color="transparent")
@@ -87,8 +96,10 @@ class Create_deposit_slip_GUI:
         
         save_button = ctk.CTkButton(button_frame, text="Lập phiếu", command=self.deposit_slip_event)
         save_button = ctk.CTkButton(button_frame, text="Lập phiếu", command=self.deposit_slip_event)
+        save_button = ctk.CTkButton(button_frame, text="Lập phiếu", command=self.deposit_slip_event)
         save_button.pack(side="left", padx=10)
         
+        cancel_button = ctk.CTkButton(button_frame, text="Huỷ", command=self.clear_fields)
         cancel_button = ctk.CTkButton(button_frame, text="Huỷ", command=self.clear_fields)
         cancel_button = ctk.CTkButton(button_frame, text="Huỷ", command=self.clear_fields)
         cancel_button.pack(side="left", padx=10)
