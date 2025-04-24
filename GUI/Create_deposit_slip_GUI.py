@@ -1,13 +1,16 @@
 import customtkinter as ctk
-import uuid 
-from utils.db_utils import DatabaseConnection
+from tkinter import messagebox
+from datetime import datetime
+from tkcalendar import Calendar
+from BUS.Create_deposit_slip_BUS import Create_deposit_slip_BUS
+from BUS.Create_deposit_slip_BUS import Create_deposit_slip_BUS
 
 
 class Create_deposit_slip_GUI:
     def __init__(self, parent_frame):
         self.parent_frame = parent_frame
-        self.db = DatabaseConnection()  # Initialize the database connection utility
-        print(f"Parent frame: {self.parent_frame}")  # Debugging statement
+        self.create_deposit_slip_bus = Create_deposit_slip_BUS()  # Initialize the business layer
+        self.create_deposit_slip_bus = Create_deposit_slip_BUS()  # Initialize the business layer
         self.create_screen_deposit_slip()
 
     def create_screen_deposit_slip(self):
@@ -64,8 +67,10 @@ class Create_deposit_slip_GUI:
         ngaygui_label.pack(side="left", padx=5)
         self.ngaygui_entry = ctk.CTkEntry(row2_frame, **entry_style)
         self.ngaygui_entry.pack(side="left", expand=True, fill="x", padx=5)
+        self.ngaygui_entry.insert(0, current_date.strftime("%Y-%m-%d"))
+        self.ngaygui_entry.configure(state="readonly")
         
-        sotiengui_label = ctk.CTkLabel(row2_frame, text="Số tiền gửi:")
+        sotiengui_label = ctk.CTkLabel(row2_frame, text="Số tiền gửi:", **label_style)
         sotiengui_label.pack(side="left", padx=5)
         self.sotiengui_entry = ctk.CTkEntry(row2_frame, **entry_style)
         self.sotiengui_entry.pack(side="left", expand=True, fill="x", padx=5)
@@ -74,15 +79,31 @@ class Create_deposit_slip_GUI:
         button_frame = ctk.CTkFrame(self.parent_frame, fg_color="transparent")
         button_frame.pack(pady=20)
         
-        save_button = ctk.CTkButton(button_frame, text="Lập phiếu", command=self.deposit_slip_event)  # Link to deposit_slip_event
+        button_style = {
+            "corner_radius": 10,
+            "font": ctk.CTkFont(size=14, family="Segoe UI"),
+            "hover": True,
+            "height": 40,
+            "width": 120
+        }
+        
+        save_button = ctk.CTkButton(button_frame, 
+                                  text="Lập phiếu", 
+                                  command=self.deposit_slip_event,
+                                  fg_color=("#1E3A8A", "#2B4F8C"),
+                                  hover_color=("#2B4F8C", "#1E3A8A"),
+                                  **button_style)
         save_button.pack(side="left", padx=10)
         
-        cancel_button = ctk.CTkButton(button_frame, text="Huỷ", command=self.clear_fields)  # Link to cancel_event
+        cancel_button = ctk.CTkButton(button_frame, 
+                                     text="Huỷ", 
+                                     command=self.clear_fields,
+                                     fg_color=("#DC3545", "#C82333"),
+                                     hover_color=("#C82333", "#DC3545"),
+                                     **button_style)
         cancel_button.pack(side="left", padx=10)
 
     def deposit_slip_event(self):
-        print("Deposit slip button clicked")
-        connection = None  # Initialize connection
         try:
             # Retrieve input values
             maso = self.maso_entry.get()
@@ -98,58 +119,20 @@ class Create_deposit_slip_GUI:
                 )
                 return
 
-            # Connect to the database
-            connection = self.db.connect()
-            cursor = connection.cursor()
-
-            # Validate if the bankbook exists and matches the customer name
-            query = "SELECT * FROM SoTietKiem WHERE maSo = ? AND hoTen = ?"
-            cursor.execute(query, (maso, khachhang))
-            result = cursor.fetchone()
+            # Call the business layer to handle the deposit slip creation
+            result = self.create_deposit_slip_bus.create_deposit_slip(maso, khachhang, ngaygui, sotiengui)
 
             if result:
-                print("Bankbook exists in the database:", result)
-
-                # Insert transaction type into LoaiGiaoDich (if not exists)
-                insert_loai_giaodich_query = """
-                INSERT INTO LoaiGiaoDich (loaiGiaodich, moTa)
-                VALUES ('GuiTien', 'Gửi tiền vào tài khoản')
-                ON CONFLICT (loaiGiaodich) DO NOTHING;
-                """
-                cursor.execute(insert_loai_giaodich_query)
-
-                # Generate a random unique maGiaoDich
-                random_magiaodich = str(uuid.uuid4())  
-
-                # Insert transaction into Giaodich
-                insert_giaodich_query = """
-                INSERT INTO Giaodich (maGiaoDich, maSo, loaiGiaoDich, SoTien, ngayGiaoDich)
-                VALUES (?, ?, 'GuiTien', ?, ?);
-                """
-                cursor.execute(insert_giaodich_query, (random_magiaodich, maso, sotiengui, ngaygui))
-                connection.commit()
-
-                # Update the SoDu in SoTietKiem
-                update_sodu_query = """
-                UPDATE SoTietKiem
-                SET SoDu = SoDu + ?
-                WHERE maSo = ?;
-                """
-                cursor.execute(update_sodu_query, (sotiengui, maso))
-                connection.commit()
-
-                print("Deposit slip saved successfully with maGiaoDich:", random_magiaodich)
+                messagebox.showinfo("Success","Lập phiếu gửi tiền thành công!")
             else:
-                print("Bankbook not found or customer name does not match")
-
+                messagebox.showerror(
+                    "Error",
+                    "Vui lòng nhập đúng thông tin dữ liệu!"
+                )
         except Exception as e:
             print(f"Error during deposit slip event: {e}")
-        finally:
-            if connection:
-                connection.close()
 
     def clear_fields(self):
-        print("Cancel button clicked")
         try:
             self.maso_entry.delete(0, "end")
             self.khachhang_entry.delete(0, "end")
