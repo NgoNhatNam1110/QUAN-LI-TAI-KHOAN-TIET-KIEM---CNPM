@@ -3,11 +3,11 @@ from tkinter import messagebox
 from datetime import datetime
 from tkcalendar import Calendar
 import tkinter as tk
+import Change_rules_GUI
 import Create_deposit_slip_GUI
 import Create_withdrawal_slip_GUI
 import Lookup_Bankbook_GUI
 import Prepare_monthly_report_GUI
-
 from utils.db_utils import DatabaseConnection
 from BUS.BankbookBUS import BankbookBUS
 
@@ -16,22 +16,17 @@ class BankbookGUI(ctk.CTk):
     def __init__(self, user_id, username, password):
         super().__init__()
 
-        self.user_id = user_id  # Store the user ID
-        self.username = username  # Store the username
-        self.password = password  # Store the password
-        self.db = DatabaseConnection()  # Initialize the database connection utility
-        self.bankbook_bus = BankbookBUS()  # Initialize the business layer
+        # Store user information
+        self.user_id = user_id
+        self.username = username
+        self.password = password
+        self.db = DatabaseConnection()
+        self.bankbook_bus = BankbookBUS()
 
-        self.title("BankBook Management")
-
-        self.user_id = user_id  # Store the user ID
-        self.username = username  # Store the username
-        self.password = password  # Store the password
-        self.db = DatabaseConnection()  # Initialize the database connection utility
-        self.bankbook_bus = BankbookBUS()  # Initialize the business layer
-
-        self.title("BankBook Management")
-        self.geometry("800x600")
+        # Configure window
+        self.title("Quản Lý Sổ Tiết Kiệm")
+        # self.geometry("800x600")
+        self.geometry("1200x800") 
 
         # Configure grid
         self.grid_rowconfigure(0, weight=1)
@@ -41,15 +36,30 @@ class BankbookGUI(ctk.CTk):
         ctk.set_appearance_mode("light")
         ctk.set_default_color_theme("blue")
 
-        # Account information
-        self.account_detail_label = ctk.CTkLabel(self.left_frame, text="Account Information :", font=ctk.CTkFont(size=18, weight="bold"))
-        self.account_detail_label.pack(pady=20)
+        # Left frame for navigation with gradient background
+        self.left_frame = ctk.CTkFrame(self, width=200, corner_radius=0, fg_color=("#F0F8FF", "#1E3A8A"))
+        self.left_frame.grid(row=0, column=0, sticky="nsew")
+        
+        # Account information section with card-like appearance
+        account_card = ctk.CTkFrame(self.left_frame, corner_radius=15, fg_color=("#FFFFFF", "#2B4F8C"))
+        account_card.pack(pady=20, padx=10, fill="x")
+        
+        self.account_detail_label = ctk.CTkLabel(account_card, 
+                                                text="Thông Tin Tài Khoản", 
+                                                font=ctk.CTkFont(size=18, weight="bold", family="Segoe UI"),
+                                                text_color=("#1E3A8A", "#FFFFFF"))
+        self.account_detail_label.pack(pady=10)
 
-
-        self.account_label = ctk.CTkLabel(self.left_frame, text=f"Tài khoản : {self.username}")
+        self.account_label = ctk.CTkLabel(account_card, 
+                                         text=f"Tài khoản: {self.username}",
+                                         font=ctk.CTkFont(size=14, family="Segoe UI"),
+                                         text_color=("#1E3A8A", "#FFFFFF"))
         self.account_label.pack(pady=5)
 
-        self.id_account_label = ctk.CTkLabel(self.left_frame, text=f"ID : {self.user_id}")
+        self.id_account_label = ctk.CTkLabel(account_card, 
+                                            text=f"ID: {self.user_id}",
+                                            font=ctk.CTkFont(size=14, family="Segoe UI"),
+                                            text_color=("#1E3A8A", "#FFFFFF"))
         self.id_account_label.pack(pady=5)
 
         # Navigation buttons with hover effects
@@ -114,9 +124,14 @@ class BankbookGUI(ctk.CTk):
         """Display the form for creating a new savings account"""
         self.clear_right_frame()
 
-
-        # Title
-        title_label = ctk.CTkLabel(self.right_frame, text="Mở Sổ Tiết Kiệm", font=ctk.CTkFont(size=20, weight="bold"))
+        # Title with gradient background
+        title_frame = ctk.CTkFrame(self.right_frame, corner_radius=15, fg_color=("#1E3A8A", "#2B4F8C"))
+        title_frame.pack(pady=20, padx=20, fill="x")
+        
+        title_label = ctk.CTkLabel(title_frame, 
+                                  text="Mở Sổ Tiết Kiệm", 
+                                  font=ctk.CTkFont(size=24, weight="bold", family="Segoe UI"),
+                                  text_color=("#FFFFFF", "#FFFFFF"))
         title_label.pack(pady=20)
 
         # Main form with card-like appearance
@@ -145,17 +160,23 @@ class BankbookGUI(ctk.CTk):
         
         maso_label = ctk.CTkLabel(row1_frame, text="Mã số:", **label_style)
         maso_label.pack(side="left", padx=5)
-        self.maso_entry = ctk.CTkEntry(row1_frame)  # Store as instance variable
+        self.maso_entry = ctk.CTkEntry(row1_frame, **entry_style)
         self.maso_entry.pack(side="left", expand=True, fill="x", padx=5)
         
         loaitk_label = ctk.CTkLabel(row1_frame, text="Loại tiết kiệm:", **label_style)
         loaitk_label.pack(side="left", padx=5)
         self.selected_option = ctk.StringVar(value="3 tháng")
-        options = ["3 thang", 
-                   "6 thang", 
-                   "vo han"]
-        dropdown = ctk.CTkOptionMenu(row1_frame, variable=self.selected_option, text_color="black", fg_color="#F5F5F5", values=options)
-        dropdown.pack(side="left", expand=True, fill="x", pady=5)
+        options = ["3 tháng", "6 tháng", "Không kỳ hạn"]
+        dropdown = ctk.CTkOptionMenu(row1_frame, 
+                                    variable=self.selected_option, 
+                                    values=options,
+                                    corner_radius=8,
+                                    font=ctk.CTkFont(size=14, family="Segoe UI"),
+                                    fg_color=("#FFFFFF", "#1E3A8A"),
+                                    button_color=("#1E3A8A", "#2B4F8C"),
+                                    button_hover_color=("#2B4F8C", "#1E3A8A"),
+                                    text_color=("#1E3A8A", "#FFFFFF"))
+        dropdown.pack(side="left", expand=True, fill="x", padx=5)
 
         # Customer information
         row2_frame = ctk.CTkFrame(form_frame, fg_color="transparent")
@@ -163,12 +184,12 @@ class BankbookGUI(ctk.CTk):
         
         khachhang_label = ctk.CTkLabel(row2_frame, text="Khách hàng:", **label_style)
         khachhang_label.pack(side="left", padx=5)
-        self.khachhang_entry = ctk.CTkEntry(row2_frame)  # Store as instance variable
+        self.khachhang_entry = ctk.CTkEntry(row2_frame, **entry_style)
         self.khachhang_entry.pack(side="left", expand=True, fill="x", padx=5)
         
         cmnd_label = ctk.CTkLabel(row2_frame, text="CMND:", **label_style)
         cmnd_label.pack(side="left", padx=5)
-        self.cmnd_entry = ctk.CTkEntry(row2_frame)  # Store as instance variable
+        self.cmnd_entry = ctk.CTkEntry(row2_frame, **entry_style)
         self.cmnd_entry.pack(side="left", expand=True, fill="x", padx=5)
 
         # Address
@@ -177,71 +198,62 @@ class BankbookGUI(ctk.CTk):
         
         diachi_label = ctk.CTkLabel(row3_frame, text="Địa chỉ:", **label_style)
         diachi_label.pack(side="left", padx=5)
-        self.diachi_entry = ctk.CTkEntry(row3_frame)  # Store as instance variable
+        self.diachi_entry = ctk.CTkEntry(row3_frame, **entry_style)
         self.diachi_entry.pack(side="left", expand=True, fill="x", padx=5)
 
-        # Row 4
-        row4_frame = ctk.CTkFrame(form_frame)
-        row4_frame.pack(fill="x", padx=10, pady=5)
+        # Opening date
+        row4_frame = ctk.CTkFrame(form_frame, fg_color="transparent")
+        row4_frame.pack(fill="x", padx=20, pady=10)
         current_date = datetime.now()
 
-        ngaymo_label = ctk.CTkLabel(row4_frame, text="Ngày mở sổ:")
+        ngaymo_label = ctk.CTkLabel(row4_frame, text="Ngày mở sổ:", **label_style)
         ngaymo_label.pack(side="left", padx=5)
-        self.ngaymo_entry = ctk.CTkEntry(row4_frame)  # Store as instance variable
+        self.ngaymo_entry = ctk.CTkEntry(row4_frame, **entry_style)
         self.ngaymo_entry.pack(side="left", expand=True, fill="x", padx=5)
-        self.ngaymo_entry.insert(0, current_date.strftime("%d/%m/%Y"))
+        self.ngaymo_entry.insert(0, current_date.strftime("%Y-%m-%d"))
+        # self.ngaymo_entry.configure(state='readonly')
         
-        # Row 5
-        row5_frame = ctk.CTkFrame(form_frame)
-        row5_frame.pack(fill="x", padx=10, pady=5)
+        # Deposit amount
+        row5_frame = ctk.CTkFrame(form_frame, fg_color="transparent")
+        row5_frame.pack(fill="x", padx=20, pady=10)
 
-        # Date frame
-        date_frame = ctk.CTkFrame(row5_frame)
-        date_frame.pack(fill="x", pady=5)
-        
-        # Calendar frame
-        calendar_frame = tk.Frame(date_frame)
-        calendar_frame.pack(side="left", padx=5)
-        
-        # Create calendar with current date
-        self.calendar = Calendar(calendar_frame, selectmode='day', 
-                               year=current_date.year, 
-                               month=current_date.month, 
-                               day=current_date.day,
-                               background="#333333", 
-                               foreground='white',
-                               bordercolor="#1f538d",
-                               headersbackground="#1f538d",
-                               headersforeground='white',
-                               selectbackground='#1f538d',
-                               normalbackground="#ffffff",
-                               normalforeground="#000000",
-                               weekendbackground="#ffffff",
-                               weekendforeground="#000000")
-        self.calendar.pack()
-        self.calendar.bind('<<CalendarSelected>>', self.update_selected_date)
-
-        sotiengui_label = ctk.CTkLabel(row5_frame, text="Số tiền gửi:")
+        sotiengui_label = ctk.CTkLabel(row5_frame, text="Số tiền gửi:", **label_style)
         sotiengui_label.pack(side="left", padx=5)
-        self.sotiengui_entry = ctk.CTkEntry(row5_frame)  # Store as instance variable
+        self.sotiengui_entry = ctk.CTkEntry(row5_frame, **entry_style)
         self.sotiengui_entry.pack(side="left", expand=True, fill="x", padx=5)
-        self.entry_var = ctk.StringVar()
         
-        # Buttons frame
-        button_frame = ctk.CTkFrame(self.right_frame)
+        # Action buttons with hover effects
+        button_frame = ctk.CTkFrame(self.right_frame, fg_color="transparent")
         button_frame.pack(pady=20)
         
-        save_button = ctk.CTkButton(button_frame, text="Lưu", command=self.insert_new_record)
-        save_button = ctk.CTkButton(button_frame, text="Lưu", command=self.insert_new_record)
+        button_style = {
+            "corner_radius": 10,
+            "font": ctk.CTkFont(size=14, family="Segoe UI"),
+            "hover": True,
+            "height": 40,
+            "width": 120
+        }
+        
+        save_button = ctk.CTkButton(button_frame, 
+                                  text="Lưu", 
+                                  command=self.insert_new_record,
+                                  fg_color=("#1E3A8A", "#2B4F8C"),
+                                  hover_color=("#2B4F8C", "#1E3A8A"),
+                                  **button_style)
         save_button.pack(side="left", padx=10)
         
-        cancel_button = ctk.CTkButton(button_frame, text="Huỷ", command=self.clear_bankbook_fields)  # Link to clear fields
-        cancel_button = ctk.CTkButton(button_frame, text="Huỷ", command=self.clear_bankbook_fields)  # Link to clear fields
+        cancel_button = ctk.CTkButton(button_frame, 
+                                     text="Hủy", 
+                                     command=self.clear_bankbook_fields,
+                                     fg_color=("#DC3545", "#C82333"),
+                                     hover_color=("#C82333", "#DC3545"),
+                                     **button_style)
         cancel_button.pack(side="left", padx=10)
 
     def insert_new_record(self):
+        """Insert a new savings account record"""
         try:
-            # Gather data from form fields
+            # Get form data
             maso = self.maso_entry.get()
             loaitk = self.selected_option.get()
             khachhang = self.khachhang_entry.get()
@@ -250,71 +262,44 @@ class BankbookGUI(ctk.CTk):
             ngaymo = self.ngaymo_entry.get()
             sotiengui = self.sotiengui_entry.get()
             
-            # Validate required fields
-            if not (maso and loaitk and khachhang and cmnd and diachi and ngaymo and sotiengui):
-                print("All fields are required.")
-                return
-
-            # Validate CMND
+            # Validate ID number
             if self.checkCMND(cmnd):
-                messagebox.showerror(
-                    "Lỗi",
-                    "CMND đã tồn tại trong hệ thống!"
-                )
-                self.entry_var.set("")
+                messagebox.showerror("Lỗi", "CMND đã tồn tại trong hệ thống!")
                 self.cmnd_entry.focus()
                 return
             
-            # Validate maso
+            # Validate account number
             if self.checkmaso(maso):
-                messagebox.showerror(
-                    "Lỗi",
-                    "Mã số đã tồn tại trong hệ thống!"
-                )
-                self.entry_var.set("")
+                messagebox.showerror("Lỗi", "Mã số đã tồn tại trong hệ thống!")
                 self.maso_entry.focus()
                 return
-            
-            # check required money
+
+            # Validate minimum deposit amount
             try:
                 value = float(self.sotiengui_entry.get().replace(",", ""))
                 if value < 1000000:
-                    messagebox.showerror(
-                        "Lỗi",
-                        "Số tiền phải lớn hơn hoặc bằng 1,000,000!"
-                    )
-                    self.entry_var.set("")
+                    messagebox.showerror("Lỗi", "Số tiền phải lớn hơn hoặc bằng 1,000,000!")
                     self.sotiengui_entry.focus()        
                     return
             except ValueError:
-                messagebox.showerror(
-                    "Lỗi",
-                    "Vui lòng nhập một số hợp lệ!"
-                )
-                self.entry_var.set("")
+                messagebox.showerror("Lỗi", "Vui lòng nhập một số hợp lệ!")
                 self.sotiengui_entry.focus()
                 return
-            # Call the business layer to insert the record
+
+            # Insert record
             result = self.bankbook_bus.insert_new_record(
                 maso, loaitk, khachhang, cmnd, diachi, ngaymo, sotiengui
             )
 
             if result:
-                print("New bankbook record inserted successfully.")
+                messagebox.showinfo("Thành công", "Mở sổ tiết kiệm thành công")
             else:
-                print("Failed to insert bankbook record.")
+                messagebox.showerror("Lỗi", "Không thể mở sổ tiết kiệm")
         except Exception as e:
             print(f"Error inserting data: {e}")
 
-    def update_selected_date(self, event=None):
-        selected_date = self.calendar.get_date()
-        date_obj = datetime.strptime(selected_date, '%m/%d/%y')
-        formatted_date = date_obj.strftime("%d/%m/%Y")
-        self.ngaymo_entry.delete(0, 'end')
-        self.ngaymo_entry.insert(0, formatted_date)
-
     def clear_bankbook_fields(self):
-        print("Clear button clicked")  # Debugging statement
+        """Clear all form fields"""
         try:
             self.maso_entry.delete(0, "end")
             self.khachhang_entry.delete(0, "end")
@@ -322,9 +307,8 @@ class BankbookGUI(ctk.CTk):
             self.diachi_entry.delete(0, "end")
             self.ngaymo_entry.delete(0, "end")
             self.sotiengui_entry.delete(0, "end")
-            print("Fields cleared successfully")  # Debugging statement
         except Exception as e:
-            print(f"Error clearing fields: {e}")  # Debugging statement
+            print(f"Error clearing fields: {e}")
 
     def create_deposit_slip(self):
         """Display deposit slip creation screen"""
@@ -348,31 +332,35 @@ class BankbookGUI(ctk.CTk):
         Prepare_monthly_report_GUI.Prepare_monthly_report_GUI(self.right_frame)
     
     def checkCMND(self, cmnd):
-        try:
-            connection = self.db.connect()
-            cursor = connection.cursor()
-            cursor.execute("SELECT COUNT(*) FROM SoTietKiem WHERE CMND = ?", (cmnd,))
-            count = cursor.fetchone()[0]
-            return count > 0
-        except Exception as e:
-            print(f"Error checking CMND: {e}")
-            return False
+        """Check if ID number already exists"""
+        if cmnd:
+            try:
+                connection = self.db.connect()
+                cursor = connection.cursor()
+                cursor.execute("SELECT COUNT(*) FROM SoTietKiem WHERE CMND = ?", (cmnd,))
+                count = cursor.fetchone()[0]
+                return count > 0
+            except Exception as e:
+                print(f"Error checking ID number: {e}")
+                return False
         
     def checkmaso(self, maso):
-        try:
-            connection = self.db.connect()
-            cursor = connection.cursor()
-            cursor.execute("SELECT COUNT(*) FROM SoTietKiem WHERE maSo = ?", (maso,))
-            count = cursor.fetchone()[0]
-            return count > 0
-        except Exception as e:
-            print(f"Error checking maso: {e}")
-            return False        
+        """Check if account number already exists"""
+        if maso:
+            try:
+                connection = self.db.connect()
+                cursor = connection.cursor()
+                cursor.execute("SELECT COUNT(*) FROM SoTietKiem WHERE maSo = ?", (maso,))
+                count = cursor.fetchone()[0]
+                return count > 0
+            except Exception as e:
+                print(f"Error checking account number: {e}")
+                return False        
 
     def change_rules(self):
         """Display rules change screen"""
         self.clear_right_frame()
-        # Change_rules_GUI.Change_rules_GUI(self.right_frame)
+        Change_rules_GUI.Change_rules_GUI()
 
     
 # if __name__ == "__main__":

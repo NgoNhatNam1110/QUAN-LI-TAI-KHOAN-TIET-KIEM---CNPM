@@ -9,7 +9,7 @@ class Lookup_Bankbook_GUI:
             parent_frame: The parent frame to attach this GUI to
         """
         self.parent_frame = parent_frame
-        self.lookup_bankbook_bus = Lookup_Bankbook_BUS()  # Initialize the business layer
+        self.lookup_bankbook_bus = Lookup_Bankbook_BUS()
         self.create_screen_lookup_bankbook()
     
     def create_screen_lookup_bankbook(self):
@@ -105,13 +105,13 @@ class Lookup_Bankbook_GUI:
         search_button.pack(side="left", padx=10)
 
         # Table container
-        self.table_container = ctk.CTkFrame(main_container, border_width=1)
+        self.table_container = ctk.CTkFrame(main_container, border_width=1, corner_radius=15)
         self.table_container.pack(fill="both", expand=True, pady=(1, 0))
 
         # Headers row
         headers = ["STT", "Mã Số", "Loại Tiết Kiệm", "Khách Hàng", "Số Dư"]
         for col, header in enumerate(headers):
-            header_frame = ctk.CTkFrame(self.table_container, fg_color=("#1f538d"), border_width=1)
+            header_frame = ctk.CTkFrame(self.table_container, fg_color=("#1E3A8A", "#2B4F8C"), corner_radius=15)
             header_frame.grid(row=0, column=col, sticky="nsew", padx=(0,1), pady=(0,1))
             header_label = ctk.CTkLabel(header_frame, 
                                       text=header, 
@@ -120,16 +120,58 @@ class Lookup_Bankbook_GUI:
             header_label.pack(padx=10, pady=5)
 
         # Configure column weights
-        self.table_container.grid_columnconfigure(0, weight=1)  # STT
-        self.table_container.grid_columnconfigure(1, weight=2)  # Mã Số
-        self.table_container.grid_columnconfigure(2, weight=2)  # Loại Tiết Kiệm
-        self.table_container.grid_columnconfigure(3, weight=3)  # Khách Hàng
-        self.table_container.grid_columnconfigure(4, weight=2)  # Số Dư
+        self.table_container.grid_columnconfigure(0, weight=1)  # Serial number
+        self.table_container.grid_columnconfigure(1, weight=2)  # Account number
+        self.table_container.grid_columnconfigure(2, weight=2)  # Account type
+        self.table_container.grid_columnconfigure(3, weight=3)  # Customer name
+        self.table_container.grid_columnconfigure(4, weight=2)  # Balance
 
-        # Populate the table
+        # Populate the table with initial data
         self.populate_table()
 
+    def search_bankbooks(self):
+        """Search bankbooks based on input criteria"""
+        try:
+            # Get search criteria
+            ma_so = self.ma_so_entry.get().strip()
+            loai_tk = self.loai_tk_var.get()
+            if loai_tk == "Tất cả":
+                loai_tk = ""
+            khach_hang = self.khach_hang_entry.get().strip()
+
+            # Fetch filtered data from the business layer
+            data = self.lookup_bankbook_bus.search_bankbooks(ma_so, loai_tk, khach_hang)
+
+            # Clear existing table data
+            self.clear_table()
+
+            # Populate the table with filtered data
+            for row_index, row in enumerate(data):
+                for col_index, value in enumerate(row.values()):
+                    cell_frame = ctk.CTkFrame(self.table_container, 
+                                            border_width=1, 
+                                            fg_color=("#FFFFFF", "#1E3A8A"),
+                                            corner_radius=8)
+                    cell_frame.grid(row=row_index + 1, column=col_index, sticky="nsew", padx=(0, 1), pady=(0, 1))
+                    cell_label = ctk.CTkLabel(cell_frame, 
+                                            text=str(value),
+                                            font=ctk.CTkFont(size=12, family="Segoe UI"),
+                                            text_color=("#1E3A8A", "#FFFFFF"))
+                    cell_label.pack(padx=10, pady=8)
+
+        except Exception as e:
+            print(f"Error searching bankbooks: {e}")
+
+    def clear_table(self):
+        """Clear all data rows from the table while keeping headers"""
+        # Remove all widgets except headers (row 0)
+        for widget in self.table_container.grid_slaves():
+            if int(widget.grid_info()['row']) > 0:
+                widget.destroy()
+        self.table_container.update()
+
     def populate_table(self):
+        """Populate the table with all bankbook data"""
         try:
             # Fetch data from the business layer
             data = self.lookup_bankbook_bus.get_all_bankbooks()
@@ -137,7 +179,10 @@ class Lookup_Bankbook_GUI:
             # Populate the table with data
             for row_index, row in enumerate(data):
                 for col_index, value in enumerate(row.values()):
-                    cell_frame = ctk.CTkFrame(self.table_container, border_width=0)
+                    cell_frame = ctk.CTkFrame(self.table_container, 
+                                            border_width=1, 
+                                            fg_color=("#FFFFFF", "#1E3A8A"),
+                                            corner_radius=8)
                     cell_frame.grid(row=row_index + 1, column=col_index, sticky="nsew", padx=(0, 1), pady=(0, 1))
                     cell_label = ctk.CTkLabel(cell_frame, 
                                             text=str(value),
