@@ -1,4 +1,5 @@
 import customtkinter as ctk
+import re
 from tkinter import messagebox
 from datetime import datetime
 from tkcalendar import Calendar
@@ -264,13 +265,16 @@ class BankbookGUI(ctk.CTk):
             
             # Validate ID number
             if self.checkCMND(cmnd):
-                messagebox.showerror("Lỗi", "CMND đã tồn tại trong hệ thống!")
+                messagebox.showerror("Error", "CMND đã tồn tại trong hệ thống!")
                 self.cmnd_entry.focus()
                 return
-            
+            elif self.checkdinhdangCMND(cmnd) == False:
+                self.cmnd_entry.focus()
+                return      
+
             # Validate account number
             if self.checkmaso(maso):
-                messagebox.showerror("Lỗi", "Mã số đã tồn tại trong hệ thống!")
+                messagebox.showerror("Error", "Mã số đã tồn tại trong hệ thống!")
                 self.maso_entry.focus()
                 return
 
@@ -278,11 +282,11 @@ class BankbookGUI(ctk.CTk):
             try:
                 value = float(self.sotiengui_entry.get().replace(",", ""))
                 if value < 1000000:
-                    messagebox.showerror("Lỗi", "Số tiền phải lớn hơn hoặc bằng 1,000,000!")
+                    messagebox.showerror("Error", "Số tiền phải lớn hơn hoặc bằng 1,000,000!")
                     self.sotiengui_entry.focus()        
                     return
             except ValueError:
-                messagebox.showerror("Lỗi", "Vui lòng nhập một số hợp lệ!")
+                messagebox.showerror("Error", "Vui lòng nhập một số hợp lệ!")
                 self.sotiengui_entry.focus()
                 return
 
@@ -294,7 +298,7 @@ class BankbookGUI(ctk.CTk):
             if result:
                 messagebox.showinfo("Thành công", "Mở sổ tiết kiệm thành công")
             else:
-                messagebox.showerror("Lỗi", "Không thể mở sổ tiết kiệm")
+                messagebox.showerror("Error", "Không thể mở sổ tiết kiệm")
         except Exception as e:
             print(f"Error inserting data: {e}")
 
@@ -323,7 +327,6 @@ class BankbookGUI(ctk.CTk):
     def lookup_bankbook(self):
         """Display account lookup screen"""
         self.clear_right_frame()
-        # self.geometry("1200x800")  # Resize window for lookup screen
         Lookup_Bankbook_GUI.Lookup_Bankbook_GUI(self.right_frame)
     
     def prepare_monthly_report(self):
@@ -343,6 +346,16 @@ class BankbookGUI(ctk.CTk):
             except Exception as e:
                 print(f"Error checking ID number: {e}")
                 return False
+    
+    def checkdinhdangCMND(self, cmnd):
+        pattern = r"^\d{9}$"
+        check = bool(re.match(pattern, cmnd))
+        if check == False :
+            messagebox.showerror("Error","Sai định dạng CMND")
+            print(check)
+            return False
+        else :
+            return True
         
     def checkmaso(self, maso):
         """Check if account number already exists"""
