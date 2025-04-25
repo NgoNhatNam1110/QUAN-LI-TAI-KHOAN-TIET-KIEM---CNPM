@@ -336,16 +336,8 @@ class BankbookGUI(ctk.CTk):
     
     def checkCMND(self, cmnd):
         """Check if ID number already exists"""
-        if cmnd:
-            try:
-                connection = self.db.connect()
-                cursor = connection.cursor()
-                cursor.execute("SELECT COUNT(*) FROM SoTietKiem WHERE CMND = ?", (cmnd,))
-                count = cursor.fetchone()[0]
-                return count > 0
-            except Exception as e:
-                print(f"Error checking ID number: {e}")
-                return False
+        check = self.bankbook_bus.checkCMND(cmnd)
+        return check
     
     def checkdinhdangCMND(self, cmnd):
         pattern = r"^\d{9}$"
@@ -359,16 +351,8 @@ class BankbookGUI(ctk.CTk):
         
     def checkmaso(self, maso):
         """Check if account number already exists"""
-        if maso:
-            try:
-                connection = self.db.connect()
-                cursor = connection.cursor()
-                cursor.execute("SELECT COUNT(*) FROM SoTietKiem WHERE maSo = ?", (maso,))
-                count = cursor.fetchone()[0]
-                return count > 0
-            except Exception as e:
-                print(f"Error checking account number: {e}")
-                return False        
+        check = self.bankbook_bus.checkmaso(maso)
+        return check
 
     def change_rules(self):
         """Display rules change screen"""
