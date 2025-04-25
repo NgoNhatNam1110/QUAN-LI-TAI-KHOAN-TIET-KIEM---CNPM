@@ -35,3 +35,30 @@ class BankbookDAL:
             # Ensure the connection is closed
             if 'connection' in locals() and connection:
                 connection.close()
+    
+    def checkmaso(self, maso):
+        if maso:
+            try:
+                connection = self.db.connect()
+                cursor = connection.cursor()
+                cursor.execute("SELECT COUNT(*) FROM SoTietKiem WHERE maSo = ?", (maso,))
+                count = cursor.fetchone()[0]
+                return count > 0
+            except Exception as e:
+                print(f"Error checking account number: {e}")
+                return False
+    
+    def checkCMND(self, cmnd):
+        if cmnd:
+            try:
+                connection = self.db.connect()
+                cursor = connection.cursor()
+                cursor.execute("SELECT COUNT(*) FROM SoTietKiem WHERE CMND = ?", (cmnd,))
+                count = cursor.fetchone()[0]
+                return count > 0
+            except Exception as e:
+                print(f"Error checking ID number: {e}")
+                return False
+    
+    def getInterests(self):
+        pass
