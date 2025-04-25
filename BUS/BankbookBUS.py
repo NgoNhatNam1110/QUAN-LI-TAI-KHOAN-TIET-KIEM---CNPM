@@ -31,5 +31,10 @@ class BankbookBUS:
         check = self.bankbook_dal.checkCMND(cmnd)
         return check
     
-    def GetInterestOptions():
-        pass
+    def GetInterestOptions(self):
+        try:
+            interest_options = self.bankbook_dal.getInterests()
+            return interest_options
+        except Exception as e:
+            print(f"Error in business layer: {e}")
+            return None

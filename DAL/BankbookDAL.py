@@ -61,4 +61,12 @@ class BankbookDAL:
                 return False
     
     def getInterests(self):
-        pass
+        try:
+            connection = self.db.connect()
+            cursor = connection.cursor()
+            cursor.execute("SELECT loaiTietKiem FROM LoaiTietKiem")
+            interest_options = [row[0] for row in cursor.fetchall()]
+            return interest_options
+        except Exception as e:
+            print(f"Error fetching interest options: {e}")
+            return None
