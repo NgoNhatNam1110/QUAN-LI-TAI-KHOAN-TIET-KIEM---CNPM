@@ -108,17 +108,50 @@ class Change_rules_GUI:
             if int(widget.grid_info()['row']) > 0:
                 widget.destroy()
 
+    # def populate_table(self, data):
+    #     """Populate the table with data"""
+    #     self.clear_table()
+    #     frames = []
+    #     for row_idx, row_data in enumerate(data, start=1):
+    #         bg_color = "#f5f6fa" if row_idx % 2 == 0 else "#ffffff"
+    #         for col_idx, key in enumerate(["maQD", "loaiTK", "tien_toithieu", "ky_han", "lai", "tgian"]):
+    #             cell_frame = ctk.CTkFrame(self.table_container, border_width=1, border_color="#b0b0b0", fg_color=bg_color)
+    #             cell_frame.grid(row=row_idx, column=col_idx, sticky="nsew", padx=1, pady=1)
+    #             cell_label = ctk.CTkLabel(cell_frame, text=str(row_data[key]), font=ctk.CTkFont(size=12))
+    #             cell_label.pack(padx=5, pady=5)
+    #             frames.append(cell_frame)
+        
+    #     row_data["frames"] = frames
+    #     for frame in frames:
+    #             frame.bind("<Button-1>", lambda e, row=row_data: self.on_row_click(row))
+    #             for child in frame.winfo_children():
+    #                 child.bind("<Button-1>", lambda e, row=row_data: self.on_row_click(row))
+    #     self.table_container.update()
+
+    #     # Ensure the table expands to fit the screen width
+    #     for col in range(len(data[0]) if data else 7):  # Default to 7 columns if no data
+    #         self.table_container.grid_columnconfigure(col, weight=1)
+
     def populate_table(self, data):
         """Populate the table with data"""
         self.clear_table()
-
         for row_idx, row_data in enumerate(data, start=1):
             bg_color = "#f5f6fa" if row_idx % 2 == 0 else "#ffffff"
+            row_frames = []
             for col_idx, key in enumerate(["maQD", "loaiTK", "tien_toithieu", "ky_han", "lai", "tgian"]):
                 cell_frame = ctk.CTkFrame(self.table_container, border_width=1, border_color="#b0b0b0", fg_color=bg_color)
                 cell_frame.grid(row=row_idx, column=col_idx, sticky="nsew", padx=1, pady=1)
                 cell_label = ctk.CTkLabel(cell_frame, text=str(row_data[key]), font=ctk.CTkFont(size=12))
                 cell_label.pack(padx=5, pady=5)
+
+                cell_frame.bind("<Button-1>", lambda event, row=row_data: self.on_row_click(row))
+                cell_label.bind("<Button-1>", lambda event, row=row_data: self.on_row_click(row))
+
+                row_frames.append(cell_frame)
+
+            row_data["frames"] = row_frames  # Thêm lại "frames" vào row_data
+
+        self.table_container.update()
 
         # Ensure the table expands to fit the screen width
         for col in range(len(data[0]) if data else 7):  # Default to 7 columns if no data
@@ -212,8 +245,8 @@ class Change_rules_GUI:
                 dal = ChangeRulesDAL()
                 dal.add_rule(values[0], values[1], values[2], values[3], values[4])
                 print("New rule added successfully.")
-                self.fetch_and_display_data()
                 self.selected_row = None
+                self.fetch_and_display_data()
             except sqlite3.Error as e:
                 print(f"Database error: {e}")
             except Exception as e:
@@ -257,8 +290,8 @@ class Change_rules_GUI:
                     updated_values["tgian"]
                 )
                 print("Database updated successfully.")
-                self.fetch_and_display_data()
                 self.selected_row = None
+                self.fetch_and_display_data()
             except sqlite3.Error as e:
                 print(f"Database error: {e}")
             except Exception as e:
@@ -286,3 +319,15 @@ class Change_rules_GUI:
                 print(f"Database error: {e}")
             except Exception as e:
                 print(f"Error: {e}")
+    
+    def on_row_click(self, row):
+        """Handle row click event"""
+        # Reset all rows to default color
+        for widget in self.table_container.grid_slaves():
+            if int(widget.grid_info()['row']) > 0:
+                widget.configure(fg_color="#ffffff")
+        # Highlight the selected row
+        for frame in row["frames"]:
+            frame.configure(fg_color="#d3d3d3")
+        self.selected_row = row
+        print("Selected row:", self.selected_row)
