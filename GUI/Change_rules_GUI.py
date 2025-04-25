@@ -1,6 +1,7 @@
 import customtkinter as ctk
 import sqlite3
 from utils.db_utils import DatabaseConnection
+from DAL.Change_rules_DAL import ChangeRulesDAL
 
 class Change_rules_GUI:
     def __init__(self, parent_frame):
@@ -82,7 +83,6 @@ class Change_rules_GUI:
 
         self.table_canvas.bind("<Configure>", resize_table_container)
 
-        from DAL.Change_rules_DAL import ChangeRulesDAL
         self.dal = ChangeRulesDAL()
 
         self.fetch_and_display_data()
@@ -227,6 +227,7 @@ class Change_rules_GUI:
             entry = ctk.CTkEntry(add_window)
             entry.grid(row=i, column=1, padx=10, pady=5)
             entries[header] = entry
+        
         def save_new_rule():
             values = [entry.get() for entry in entries.values()]
             try:
@@ -240,8 +241,7 @@ class Change_rules_GUI:
                 else:
                     new_id = max_id + 1
                 maQD = f"QD{new_id:03d}"
-                # Thêm vào DAL (DAL sẽ tự động thêm vào LoaiTietKiem nếu cần)
-                from DAL.Change_rules_DAL import ChangeRulesDAL
+
                 dal = ChangeRulesDAL()
                 dal.add_rule(values[0], values[1], values[2], values[3], values[4])
                 print("New rule added successfully.")
@@ -276,10 +276,10 @@ class Change_rules_GUI:
             entry.grid(row=i, column=1, padx=10, pady=5)
             entry.insert(0, str(self.selected_row[key]))
             entries[key] = entry
+        
         def save_changes():
             updated_values = {key: entry.get() for key, entry in entries.items()}
             try:
-                from DAL.Change_rules_DAL import ChangeRulesDAL
                 dal = ChangeRulesDAL()
                 dal.update_rule(
                     self.selected_row["maQD"],
@@ -309,7 +309,6 @@ class Change_rules_GUI:
         confirm = mbox.askyesno("Xác nhận xóa", "Bạn có chắc chắn muốn xóa quy định này?")
         if confirm:
             try:
-                from DAL.Change_rules_DAL import ChangeRulesDAL
                 dal = ChangeRulesDAL()
                 dal.delete_rule(self.selected_row["maQD"], self.selected_row["loaiTK"])
                 print("Rule deleted successfully.")

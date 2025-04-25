@@ -71,7 +71,7 @@ class ChangeRulesDAL:
         finally:
             self.db.close(connection)
 
-    def delete_rule(self, maQD, loaiTK=None):
+    def delete_rule(self, maQD, loaiTK):
         try:
             connection = self.db.connect()
             cursor = connection.cursor()

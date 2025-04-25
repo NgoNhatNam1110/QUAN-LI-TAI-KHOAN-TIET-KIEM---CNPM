@@ -167,7 +167,8 @@ class BankbookGUI(ctk.CTk):
         loaitk_label = ctk.CTkLabel(row1_frame, text="Loại tiết kiệm:", **label_style)
         loaitk_label.pack(side="left", padx=5)
         self.selected_option = ctk.StringVar(value="3 tháng")
-        options = ["3 tháng", "6 tháng", "Không kỳ hạn"]
+        # options = ["3 tháng", "6 tháng", "Không kỳ hạn"]
+        options = self.bankbook_bus.GetInterestOptions()
         dropdown = ctk.CTkOptionMenu(row1_frame, 
                                     variable=self.selected_option, 
                                     values=options,
@@ -343,7 +344,7 @@ class BankbookGUI(ctk.CTk):
         pattern = r"^\d{9}$"
         check = bool(re.match(pattern, cmnd))
         if check == False :
-            messagebox.showerror("Error","Sai định dạng CMND")
+            messagebox.showerror("Error","Sai định dạng CMND, vui lòng nhập đúng 9 số!")
             print(check)
             return False
         else :
@@ -353,6 +354,16 @@ class BankbookGUI(ctk.CTk):
         """Check if account number already exists"""
         check = self.bankbook_bus.checkmaso(maso)
         return check
+    
+    def checkdinhdangMaSo(self, maso):
+        pattern = r"STK^\d{10}$"
+        check = bool(re.match(pattern, maso))
+        if check == False :
+            messagebox.showerror("Error","Sai định dạng MaSoTK, vui lòng nhập đúng định dạng: STKxxxxxxxxxx")
+            print(check)
+            return False
+        else :
+            return True
 
     def change_rules(self):
         """Display rules change screen"""

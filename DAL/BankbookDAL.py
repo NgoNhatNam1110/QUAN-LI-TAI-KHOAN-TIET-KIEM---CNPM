@@ -59,3 +59,6 @@ class BankbookDAL:
             except Exception as e:
                 print(f"Error checking ID number: {e}")
                 return False
+    
+    def getInterests(self):
+        pass

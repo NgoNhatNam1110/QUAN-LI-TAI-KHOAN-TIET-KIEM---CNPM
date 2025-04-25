@@ -30,3 +30,6 @@ class BankbookBUS:
     def checkCMND(self, cmnd):
         check = self.bankbook_dal.checkCMND(cmnd)
         return check
+    
+    def GetInterestOptions():
+        pass
