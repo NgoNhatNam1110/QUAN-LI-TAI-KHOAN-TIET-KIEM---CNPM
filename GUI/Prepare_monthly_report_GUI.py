@@ -162,7 +162,7 @@ class Prepare_monthly_report_GUI:
             
             if not data:
                 print("No data found for the selected date")
-                # self.clear_table()
+                self.clear_table()
                 return
 
             # Ensure table exists and is clear

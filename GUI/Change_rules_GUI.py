@@ -1,11 +1,12 @@
 import customtkinter as ctk
 import sqlite3
 from utils.db_utils import DatabaseConnection
+from BUS.Change_rules_BUS import ChangeRulesBUS  # Import the BUS layer
 
 class Change_rules_GUI:
     def __init__(self, parent_frame):
         self.parent_frame = parent_frame
-        self.db = DatabaseConnection()
+        self.bus = ChangeRulesBUS()  # Use the BUS layer
         self.table_container = None
         self.selected_row = None
         self.create_screen_change_rules()
@@ -82,9 +83,6 @@ class Change_rules_GUI:
 
         self.table_canvas.bind("<Configure>", resize_table_container)
 
-        from DAL.Change_rules_DAL import ChangeRulesDAL
-        self.dal = ChangeRulesDAL()
-
         self.fetch_and_display_data()
 
         # Table headers
@@ -111,14 +109,23 @@ class Change_rules_GUI:
     def populate_table(self, data):
         """Populate the table with data"""
         self.clear_table()
-
         for row_idx, row_data in enumerate(data, start=1):
             bg_color = "#f5f6fa" if row_idx % 2 == 0 else "#ffffff"
+            row_frames = []
             for col_idx, key in enumerate(["maQD", "loaiTK", "tien_toithieu", "ky_han", "lai", "tgian"]):
                 cell_frame = ctk.CTkFrame(self.table_container, border_width=1, border_color="#b0b0b0", fg_color=bg_color)
                 cell_frame.grid(row=row_idx, column=col_idx, sticky="nsew", padx=1, pady=1)
                 cell_label = ctk.CTkLabel(cell_frame, text=str(row_data[key]), font=ctk.CTkFont(size=12))
                 cell_label.pack(padx=5, pady=5)
+
+                cell_frame.bind("<Button-1>", lambda event, row=row_data: self.on_row_click(row))
+                cell_label.bind("<Button-1>", lambda event, row=row_data: self.on_row_click(row))
+
+                row_frames.append(cell_frame)
+
+            row_data["frames"] = row_frames  # Thêm lại "frames" vào row_data
+
+        self.table_container.update()
 
         # Ensure the table expands to fit the screen width
         for col in range(len(data[0]) if data else 7):  # Default to 7 columns if no data
@@ -126,41 +133,12 @@ class Change_rules_GUI:
 
     def fetch_and_display_data(self):
         try:
-            # Connect to the database
-            connection = self.db.connect()
-            cursor = connection.cursor()
-
-            # Query to fetch term types
-            query = "SELECT ts.maQuyDinh, ts.loaiTietKiem, ts.tienGuiToiThieu, ts.kyHan, ts.laiSuat, ltk.thoiGianGuiToiThieu FROM ThamSo ts JOIN LoaiTietKiem ltk ON ts.loaiTietKiem = ltk.loaiTietKiem"
-            cursor.execute(query)
-            rows = cursor.fetchall()
-
-            # Format data for table population
-            data = []
-            # Validate row structure before unpacking
-            for row in rows:
-                if len(row) == 6:
-                    maQD, loaiTK, tien_toithieu,ky_han,lai, tgian = row
-                    data.append({
-                        "maQD": maQD,
-                        "loaiTK": loaiTK,
-                        "tien_toithieu": tien_toithieu,
-                        "ky_han": ky_han,
-                        "lai": lai,
-                        "tgian": tgian
-                    })
-                else:
-                    print(f"Skipping invalid row: {row}")
-
-            # Populate table with data using the new method (with select box)
+            # Fetch data using the BUS
+            data = self.bus.get_all_rules()
+            # Populate the table with the fetched data
             self.populate_table(data)
-
-            # Close the connection
-            self.db.close(connection)
-        except sqlite3.Error as e:
-            print(f"Database error: {e}")
         except Exception as e:
-            print(f"Error: {e}")
+            print(f"Error fetching and displaying data: {e}")
 
     def clear_frame(self):
         for widget in self.parent_frame.winfo_children():
@@ -194,32 +172,16 @@ class Change_rules_GUI:
             entry = ctk.CTkEntry(add_window)
             entry.grid(row=i, column=1, padx=10, pady=5)
             entries[header] = entry
+        
         def save_new_rule():
             values = [entry.get() for entry in entries.values()]
             try:
-                connection = self.db.connect()
-                cursor = connection.cursor()
-                # Lấy mã quy định lớn nhất hiện tại
-                cursor.execute("SELECT MAX(CAST(SUBSTR(maQuyDinh, 3) AS INTEGER)) FROM ThamSo WHERE maQuyDinh LIKE 'QD%'")
-                max_id = cursor.fetchone()[0]
-                if max_id is None:
-                    new_id = 1
-                else:
-                    new_id = max_id + 1
-                maQD = f"QD{new_id:03d}"
-                # Thêm vào DAL (DAL sẽ tự động thêm vào LoaiTietKiem nếu cần)
-                from DAL.Change_rules_DAL import ChangeRulesDAL
-                dal = ChangeRulesDAL()
-                dal.add_rule(values[0], values[1], values[2], values[3], values[4])
+                self.bus.add_new_rule(*values)  # Delegate to the BUS
                 print("New rule added successfully.")
-                self.fetch_and_display_data()
                 self.selected_row = None
-            except sqlite3.Error as e:
-                print(f"Database error: {e}")
+                self.fetch_and_display_data()
             except Exception as e:
                 print(f"Error: {e}")
-            finally:
-                self.db.close(connection)
             add_window.destroy()
         save_button = ctk.CTkButton(add_window, text="Lưu", command=save_new_rule)
         save_button.grid(row=len(headers), column=0, columnspan=2, pady=10)
@@ -242,13 +204,16 @@ class Change_rules_GUI:
             entry = ctk.CTkEntry(edit_window)
             entry.grid(row=i, column=1, padx=10, pady=5)
             entry.insert(0, str(self.selected_row[key]))
+
+            # Make "Tên Loại Tiết Kiệm" read-only
+            if header == "Tên Loại Tiết Kiệm":
+                entry.configure(state="readonly")
             entries[key] = entry
+        
         def save_changes():
             updated_values = {key: entry.get() for key, entry in entries.items()}
             try:
-                from DAL.Change_rules_DAL import ChangeRulesDAL
-                dal = ChangeRulesDAL()
-                dal.update_rule(
+                self.bus.update_rule(
                     self.selected_row["maQD"],
                     updated_values["loaiTK"],
                     updated_values["tien_toithieu"],
@@ -256,11 +221,9 @@ class Change_rules_GUI:
                     updated_values["lai"],
                     updated_values["tgian"]
                 )
-                print("Database updated successfully.")
-                self.fetch_and_display_data()
                 self.selected_row = None
-            except sqlite3.Error as e:
-                print(f"Database error: {e}")
+                self.fetch_and_display_data()
+                # print("Database updated successfully.")
             except Exception as e:
                 print(f"Error: {e}")
             edit_window.destroy()
@@ -276,13 +239,21 @@ class Change_rules_GUI:
         confirm = mbox.askyesno("Xác nhận xóa", "Bạn có chắc chắn muốn xóa quy định này?")
         if confirm:
             try:
-                from DAL.Change_rules_DAL import ChangeRulesDAL
-                dal = ChangeRulesDAL()
-                dal.delete_rule(self.selected_row["maQD"], self.selected_row["loaiTK"])
+                self.bus.delete_rule(self.selected_row["maQD"], self.selected_row["loaiTK"])  # Delegate to the BUS
                 print("Rule deleted successfully.")
                 self.selected_row = None
                 self.fetch_and_display_data()
-            except sqlite3.Error as e:
-                print(f"Database error: {e}")
             except Exception as e:
                 print(f"Error: {e}")
+    
+    def on_row_click(self, row):
+        """Handle row click event"""
+        # Reset all rows to default color
+        for widget in self.table_container.grid_slaves():
+            if int(widget.grid_info()['row']) > 0:
+                widget.configure(fg_color="#ffffff")
+        # Highlight the selected row
+        for frame in row["frames"]:
+            frame.configure(fg_color="#d3d3d3")
+        self.selected_row = row
+        print("Selected row:", self.selected_row)
