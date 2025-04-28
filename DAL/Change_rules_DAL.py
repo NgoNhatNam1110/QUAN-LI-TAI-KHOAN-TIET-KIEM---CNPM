@@ -58,16 +58,39 @@ class ChangeRulesDAL:
         try:
             connection = self.db.connect()
             cursor = connection.cursor()
-            # Update ThamSo
-            update_query = """
+
+            # Update ThamSo table
+            update_query_thamso = """
                 UPDATE ThamSo
                 SET loaiTietKiem = ?, tienGuiToiThieu = ?, kyHan = ?, laiSuat = ?
                 WHERE maQuyDinh = ?
             """
-            cursor.execute(update_query, (loaiTK, tien_toithieu, ky_han, lai, maQD))
-            # Update LoaiTietKiem
-            cursor.execute("UPDATE LoaiTietKiem SET kyHan = ?, laiSuat = ?, thoiGianGuiToiThieu = ? WHERE loaiTietKiem = ?", (ky_han, lai, tgian, loaiTK))
+            cursor.execute(update_query_thamso, (loaiTK, tien_toithieu, ky_han, lai, maQD))
+
+            # Check if loaiTietKiem exists in LoaiTietKiem table
+            cursor.execute("SELECT COUNT(*) FROM LoaiTietKiem WHERE loaiTietKiem = ?", (loaiTK,))
+            if cursor.fetchone()[0] > 0:
+                # Fetch existing values for comparison
+                cursor.execute("SELECT kyHan, laiSuat, thoiGianGuiToiThieu FROM LoaiTietKiem WHERE loaiTietKiem = ?", (loaiTK,))
+                existing_values = cursor.fetchone()
+
+                # Update only if values have changed
+                if existing_values != (ky_han, lai, tgian):
+                    update_query_loaitietkiem = """
+                        UPDATE LoaiTietKiem
+                        SET kyHan = ?, laiSuat = ?, thoiGianGuiToiThieu = ?
+                        WHERE loaiTietKiem = ?
+                    """
+                    cursor.execute(update_query_loaitietkiem, (ky_han, lai, tgian, loaiTK))
+            else:
+                raise ValueError(f"LoaiTietKiem '{loaiTK}' does not exist in the database.")
+
+            # Commit the transaction
             connection.commit()
+            return True  # Indicate success
+        except Exception as e:
+            print(f"Error updating rule: {e}")
+            return False  # Indicate failure
         finally:
             self.db.close(connection)
 
