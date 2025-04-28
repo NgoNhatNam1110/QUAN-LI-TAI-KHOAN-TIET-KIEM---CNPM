@@ -70,3 +70,14 @@ class BankbookDAL:
         except Exception as e:
             print(f"Error fetching interest options: {e}")
             return None
+        
+    def checkminimumDeposit(self, loaitk):
+        try:
+            connection = self.db.connect()
+            cursor = connection.cursor()
+            cursor.execute("SELECT tienGuiToiThieu FROM ThamSo WHERE loaiTietKiem = ?", (loaitk,))
+            minimum_deposit = cursor.fetchone()[0]
+            return minimum_deposit
+        except Exception as e:
+            print(f"Error checking minimum deposit: {e}")
+            return None

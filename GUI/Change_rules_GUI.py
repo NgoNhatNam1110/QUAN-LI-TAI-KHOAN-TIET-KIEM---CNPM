@@ -2,6 +2,7 @@ import customtkinter as ctk
 import sqlite3
 from utils.db_utils import DatabaseConnection
 from BUS.Change_rules_BUS import ChangeRulesBUS  # Import the BUS layer
+from tkinter import messagebox
 
 class Change_rules_GUI:
     def __init__(self, parent_frame):
@@ -86,7 +87,7 @@ class Change_rules_GUI:
         self.fetch_and_display_data()
 
         # Table headers
-        headers = ["Mã Quy Định", "Tên Loại Tiết Kiệm", "Tiền Gửi Tối Thiểu", "Kỳ Hạn (tháng)", "Lãi Suất (%)", "Thời Gian Gửi Tối Thiểu"]
+        headers = ["Mã Quy Định", "Tên Loại Tiết Kiệm", "Tiền Gửi Tối Thiểu", "Kỳ Hạn (tháng)", "Lãi Suất", "Thời Gian Gửi Tối Thiểu"]
         for col, header in enumerate(headers):
             header_frame = ctk.CTkFrame(self.table_container, fg_color=("#1E3A8A", "#2B4F8C"), corner_radius=8)
             header_frame.grid(row=0, column=col, sticky="nsew", padx=(0, 1), pady=(0, 1))
@@ -165,7 +166,7 @@ class Change_rules_GUI:
         add_window.title("Thêm quy định mới")
         add_window.attributes('-topmost', True)
         entries = {}
-        headers = ["Tên Loại Tiết Kiệm", "Tiền Gửi Tối Thiểu", "Kỳ Hạn (tháng)", "Lãi Suất (%)", "Thời Gian Gửi Tối Thiểu"]
+        headers = ["Tên Loại Tiết Kiệm", "Tiền Gửi Tối Thiểu", "Kỳ Hạn (tháng)", "Lãi Suất", "Thời Gian Gửi Tối Thiểu"]
         for i, header in enumerate(headers):
             label = ctk.CTkLabel(add_window, text=header)
             label.grid(row=i, column=0, padx=10, pady=5)
@@ -174,6 +175,16 @@ class Change_rules_GUI:
             entries[header] = entry
         
         def save_new_rule():
+            values = {key: entry.get() for key, entry in entries.items()}
+            # Retrieve the value of "Tên Loại Tiết Kiệm"
+            loaitk = values["Tên Loại Tiết Kiệm"]
+            # Validate the inputs
+            if not self.validate_loaitk(loaitk):
+                messagebox.showerror("Lỗi", "Đã tồn tại loại tiết kiệm này!")
+            elif not self.validate_input(values["Tiền Gửi Tối Thiểu"], values["Kỳ Hạn (tháng)"], values["Lãi Suất"], values["Thời Gian Gửi Tối Thiểu"]):
+                messagebox.showerror("Lỗi", "Vui lòng nhập đúng thông số!")
+                return
+
             values = [entry.get() for entry in entries.values()]
             try:
                 self.bus.add_new_rule(*values)  # Delegate to the BUS
@@ -196,7 +207,7 @@ class Change_rules_GUI:
         edit_window.title("Chỉnh sửa quy định")
         edit_window.attributes('-topmost', True)
         entries = {}
-        headers = ["Tên Loại Tiết Kiệm", "Tiền Gửi Tối Thiểu", "Kỳ Hạn (tháng)", "Lãi Suất (%)", "Thời Gian Gửi Tối Thiểu"]
+        headers = ["Tên Loại Tiết Kiệm", "Tiền Gửi Tối Thiểu", "Kỳ Hạn (tháng)", "Lãi Suất", "Thời Gian Gửi Tối Thiểu"]
         row_keys = ["loaiTK", "tien_toithieu", "ky_han", "lai", "tgian"]
         for i, (header, key) in enumerate(zip(headers, row_keys)):
             label = ctk.CTkLabel(edit_window, text=header)
@@ -209,8 +220,10 @@ class Change_rules_GUI:
             if header == "Tên Loại Tiết Kiệm":
                 entry.configure(state="readonly")
             entries[key] = entry
-        
+
         def save_changes():
+            if not self.validate_input(self.selected_row["tien_toithieu"], self.selected_row["ky_han"], self.selected_row["lai"], self.selected_row["tgian"]):
+                messagebox.showerror("Lỗi", "Vui lòng nhập đúng thông số!")
             updated_values = {key: entry.get() for key, entry in entries.items()}
             try:
                 self.bus.update_rule(
@@ -257,3 +270,20 @@ class Change_rules_GUI:
             frame.configure(fg_color="#d3d3d3")
         self.selected_row = row
         print("Selected row:", self.selected_row)
+
+    def validate_input(self, tien_toithieu, ky_han, lai, tgian):
+        """Validate the input data"""
+        if not tien_toithieu or not ky_han or not lai or not tgian:
+            return False
+        try:
+            # validate types of tien_toithieu, ky_han, lai, tgian
+            if not isinstance(tien_toithieu, (int, float)) or not isinstance(ky_han, int) or not isinstance(lai, (int, float)) or not isinstance(tgian, int):
+                return False
+        except ValueError:
+            return False
+        return True
+        
+    
+    def validate_loaitk(self, loaiTK):
+        # Kiểm tra xem loại tiết kiệm có tồn tại trong cơ sở dữ liệu hay không
+        return self.bus.validate_loaitk(loaiTK)

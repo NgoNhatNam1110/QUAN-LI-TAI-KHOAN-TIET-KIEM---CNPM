@@ -213,7 +213,7 @@ class BankbookGUI(ctk.CTk):
         self.ngaymo_entry = ctk.CTkEntry(row4_frame, **entry_style)
         self.ngaymo_entry.pack(side="left", expand=True, fill="x", padx=5)
         self.ngaymo_entry.insert(0, current_date.strftime("%Y-%m-%d"))
-        # self.ngaymo_entry.configure(state='readonly')
+        self.ngaymo_entry.configure(state='readonly')
         
         # Deposit amount
         row5_frame = ctk.CTkFrame(form_frame, fg_color="transparent")
@@ -264,6 +264,7 @@ class BankbookGUI(ctk.CTk):
             ngaymo = self.ngaymo_entry.get()
             sotiengui = self.sotiengui_entry.get()
             
+            print("sotiengui", sotiengui)
             # Validate ID number
             if self.checkCMND(cmnd):
                 messagebox.showerror("Error", "CMND đã tồn tại trong hệ thống!")
@@ -280,14 +281,7 @@ class BankbookGUI(ctk.CTk):
                 return
 
             # Validate minimum deposit amount
-            try:
-                value = float(self.sotiengui_entry.get().replace(",", ""))
-                if value < 1000000:
-                    messagebox.showerror("Error", "Số tiền phải lớn hơn hoặc bằng 1,000,000!")
-                    self.sotiengui_entry.focus()        
-                    return
-            except ValueError:
-                messagebox.showerror("Error", "Vui lòng nhập một số hợp lệ!")
+            if self.checkminimumDeposit(loaitk, sotiengui) == False:
                 self.sotiengui_entry.focus()
                 return
 
@@ -350,6 +344,12 @@ class BankbookGUI(ctk.CTk):
         else :
             return True
         
+    def checkminimumDeposit(self, loaitk, sotiengui):
+        """Check if the deposit amount meets the minimum requirement"""
+        if self.bankbook_bus.checkminimumDeposit(loaitk, sotiengui) == False:
+            return False
+        return True
+    
     def checkmaso(self, maso):
         """Check if account number already exists"""
         check = self.bankbook_bus.checkmaso(maso)

@@ -38,3 +38,16 @@ class BankbookBUS:
         except Exception as e:
             print(f"Error in business layer: {e}")
             return None
+        
+    def checkminimumDeposit(self, loaitk, sotiengui):
+        try:
+                sotientoithieu = self.bankbook_dal.checkminimumDeposit(loaitk)
+                if float(sotientoithieu) > float(sotiengui):
+                    messagebox.showerror(
+                        "Error",
+                        f"Số tiền phải lớn hơn hoặc bằng {sotientoithieu:}!"
+                    )
+                    return False
+                return True
+        except ValueError:
+            return False
