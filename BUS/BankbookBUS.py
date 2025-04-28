@@ -31,5 +31,5 @@ class BankbookBUS:
         check = self.bankbook_dal.checkCMND(cmnd)
         return check
     
-    def GetInterestOptions():
+    def GetInterestOptions(self):
         pass
