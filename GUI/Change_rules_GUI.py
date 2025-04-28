@@ -1,7 +1,11 @@
 import customtkinter as ctk
 import sqlite3
 from utils.db_utils import DatabaseConnection
+<<<<<<< HEAD
 from BUS.Change_rules_BUS import ChangeRulesBUS  # Import the BUS layer
+=======
+from DAL.Change_rules_DAL import ChangeRulesDAL
+>>>>>>> 0112748 (chore)
 
 class Change_rules_GUI:
     def __init__(self, parent_frame):
@@ -83,6 +87,11 @@ class Change_rules_GUI:
 
         self.table_canvas.bind("<Configure>", resize_table_container)
 
+<<<<<<< HEAD
+=======
+        self.dal = ChangeRulesDAL()
+
+>>>>>>> 0112748 (chore)
         self.fetch_and_display_data()
 
         # Table headers
@@ -105,6 +114,30 @@ class Change_rules_GUI:
         for widget in self.table_container.grid_slaves():
             if int(widget.grid_info()['row']) > 0:
                 widget.destroy()
+
+    # def populate_table(self, data):
+    #     """Populate the table with data"""
+    #     self.clear_table()
+    #     frames = []
+    #     for row_idx, row_data in enumerate(data, start=1):
+    #         bg_color = "#f5f6fa" if row_idx % 2 == 0 else "#ffffff"
+    #         for col_idx, key in enumerate(["maQD", "loaiTK", "tien_toithieu", "ky_han", "lai", "tgian"]):
+    #             cell_frame = ctk.CTkFrame(self.table_container, border_width=1, border_color="#b0b0b0", fg_color=bg_color)
+    #             cell_frame.grid(row=row_idx, column=col_idx, sticky="nsew", padx=1, pady=1)
+    #             cell_label = ctk.CTkLabel(cell_frame, text=str(row_data[key]), font=ctk.CTkFont(size=12))
+    #             cell_label.pack(padx=5, pady=5)
+    #             frames.append(cell_frame)
+        
+    #     row_data["frames"] = frames
+    #     for frame in frames:
+    #             frame.bind("<Button-1>", lambda e, row=row_data: self.on_row_click(row))
+    #             for child in frame.winfo_children():
+    #                 child.bind("<Button-1>", lambda e, row=row_data: self.on_row_click(row))
+    #     self.table_container.update()
+
+    #     # Ensure the table expands to fit the screen width
+    #     for col in range(len(data[0]) if data else 7):  # Default to 7 columns if no data
+    #         self.table_container.grid_columnconfigure(col, weight=1)
 
     def populate_table(self, data):
         """Populate the table with data"""
@@ -176,10 +209,31 @@ class Change_rules_GUI:
         def save_new_rule():
             values = [entry.get() for entry in entries.values()]
             try:
+<<<<<<< HEAD
                 self.bus.add_new_rule(*values)  # Delegate to the BUS
                 print("New rule added successfully.")
                 self.selected_row = None
                 self.fetch_and_display_data()
+=======
+                connection = self.db.connect()
+                cursor = connection.cursor()
+                # Lấy mã quy định lớn nhất hiện tại
+                cursor.execute("SELECT MAX(CAST(SUBSTR(maQuyDinh, 3) AS INTEGER)) FROM ThamSo WHERE maQuyDinh LIKE 'QD%'")
+                max_id = cursor.fetchone()[0]
+                if max_id is None:
+                    new_id = 1
+                else:
+                    new_id = max_id + 1
+                maQD = f"QD{new_id:03d}"
+
+                dal = ChangeRulesDAL()
+                dal.add_rule(values[0], values[1], values[2], values[3], values[4])
+                print("New rule added successfully.")
+                self.selected_row = None
+                self.fetch_and_display_data()
+            except sqlite3.Error as e:
+                print(f"Database error: {e}")
+>>>>>>> 0112748 (chore)
             except Exception as e:
                 print(f"Error: {e}")
             add_window.destroy()
@@ -213,7 +267,12 @@ class Change_rules_GUI:
         def save_changes():
             updated_values = {key: entry.get() for key, entry in entries.items()}
             try:
+<<<<<<< HEAD
                 self.bus.update_rule(
+=======
+                dal = ChangeRulesDAL()
+                dal.update_rule(
+>>>>>>> 0112748 (chore)
                     self.selected_row["maQD"],
                     updated_values["loaiTK"],
                     updated_values["tien_toithieu"],
@@ -221,9 +280,17 @@ class Change_rules_GUI:
                     updated_values["lai"],
                     updated_values["tgian"]
                 )
+<<<<<<< HEAD
                 self.selected_row = None
                 self.fetch_and_display_data()
                 # print("Database updated successfully.")
+=======
+                print("Database updated successfully.")
+                self.selected_row = None
+                self.fetch_and_display_data()
+            except sqlite3.Error as e:
+                print(f"Database error: {e}")
+>>>>>>> 0112748 (chore)
             except Exception as e:
                 print(f"Error: {e}")
             edit_window.destroy()
@@ -239,7 +306,12 @@ class Change_rules_GUI:
         confirm = mbox.askyesno("Xác nhận xóa", "Bạn có chắc chắn muốn xóa quy định này?")
         if confirm:
             try:
+<<<<<<< HEAD
                 self.bus.delete_rule(self.selected_row["maQD"], self.selected_row["loaiTK"])  # Delegate to the BUS
+=======
+                dal = ChangeRulesDAL()
+                dal.delete_rule(self.selected_row["maQD"], self.selected_row["loaiTK"])
+>>>>>>> 0112748 (chore)
                 print("Rule deleted successfully.")
                 self.selected_row = None
                 self.fetch_and_display_data()
