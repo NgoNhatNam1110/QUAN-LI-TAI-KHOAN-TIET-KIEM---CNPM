@@ -281,7 +281,7 @@ class BankbookGUI(ctk.CTk):
                 return
 
             # Validate minimum deposit amount
-            if self.checkminimumDeposit(loaitk, sotiengui) == False:
+            if not self.checkminimumDeposit(loaitk, sotiengui):
                 self.sotiengui_entry.focus()
                 return
 
@@ -346,7 +346,9 @@ class BankbookGUI(ctk.CTk):
         
     def checkminimumDeposit(self, loaitk, sotiengui):
         """Check if the deposit amount meets the minimum requirement"""
-        if self.bankbook_bus.checkminimumDeposit(loaitk, sotiengui) == False:
+        message = self.bankbook_bus.checkminimumDeposit(loaitk, sotiengui)
+        if message != "Số tiền gửi hợp lệ.":
+            messagebox.showerror("Thông báo", message)
             return False
         return True
     

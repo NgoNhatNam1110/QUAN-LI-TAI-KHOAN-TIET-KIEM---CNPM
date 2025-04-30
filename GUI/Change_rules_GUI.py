@@ -182,6 +182,7 @@ class Change_rules_GUI:
             if not self.validate_loaitk(loaitk):
                 messagebox.showerror("Lỗi", "Đã tồn tại loại tiết kiệm này!")
             elif not self.validate_input(values["Tiền Gửi Tối Thiểu"], values["Kỳ Hạn (tháng)"], values["Lãi Suất"], values["Thời Gian Gửi Tối Thiểu"]):
+                print(values["Tiền Gửi Tối Thiểu"], values["Kỳ Hạn (tháng)"], values["Lãi Suất"], values["Thời Gian Gửi Tối Thiểu"])
                 messagebox.showerror("Lỗi", "Vui lòng nhập đúng thông số!")
                 return
 
@@ -273,17 +274,22 @@ class Change_rules_GUI:
 
     def validate_input(self, tien_toithieu, ky_han, lai, tgian):
         """Validate the input data"""
-        if not tien_toithieu or not ky_han or not lai or not tgian:
-            return False
         try:
-            # validate types of tien_toithieu, ky_han, lai, tgian
-            if not isinstance(tien_toithieu, (int, float)) or not isinstance(ky_han, int) or not isinstance(lai, (int, float)) or not isinstance(tgian, int):
+            # Convert inputs to appropriate types
+            tien_toithieu = float(tien_toithieu)
+            ky_han = int(ky_han)
+            lai = float(lai)
+            tgian = int(tgian)
+
+            # Ensure all values are positive
+            if tien_toithieu <= 0 or ky_han <= 0 or lai <= 0 or tgian <= 0:
                 return False
+
+            return True
         except ValueError:
+            # If conversion fails, return False
             return False
-        return True
-        
-    
+
     def validate_loaitk(self, loaiTK):
         # Kiểm tra xem loại tiết kiệm có tồn tại trong cơ sở dữ liệu hay không
         return self.bus.validate_loaitk(loaiTK)

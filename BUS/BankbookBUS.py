@@ -41,13 +41,14 @@ class BankbookBUS:
         
     def checkminimumDeposit(self, loaitk, sotiengui):
         try:
-                sotientoithieu = self.bankbook_dal.checkminimumDeposit(loaitk)
-                if float(sotientoithieu) > float(sotiengui):
-                    messagebox.showerror(
-                        "Error",
-                        f"Số tiền phải lớn hơn hoặc bằng {sotientoithieu:}!"
-                    )
-                    return False
-                return True
+            sotientoithieu = self.bankbook_dal.checkminimumDeposit(loaitk)
+            if sotientoithieu is None:
+                return "Không thể kiểm tra số tiền gửi tối thiểu. Vui lòng thử lại."
+            if float(sotiengui) < float(sotientoithieu):
+                return f"Số tiền gửi phải lớn hơn hoặc bằng {sotientoithieu}."
+            return "Số tiền gửi hợp lệ."
         except ValueError:
-            return False
+            return "Số tiền gửi không hợp lệ. Vui lòng nhập một số hợp lệ."
+        except Exception as e:
+            print(f"Error in business layer: {e}")
+            return "Đã xảy ra lỗi khi kiểm tra số tiền gửi."

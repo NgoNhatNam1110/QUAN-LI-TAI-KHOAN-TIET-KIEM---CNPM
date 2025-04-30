@@ -1,0 +1,7 @@
+| Task ID | Description   
+|---------|-----------------------------------------------------------------
+| 1       | Autofill name    
+| 2       | Withdrawal rework
+| 3       | Unittest these 2 important functions: Change rules, Withdrawal
+| 4       | Docker (Deployment)
+| 5       | Report rework
