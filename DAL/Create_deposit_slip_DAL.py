@@ -56,3 +56,5 @@ class Create_deposit_slip_DAL:
         finally:
             if 'connection' in locals() and connection:
                 connection.close()
+    
+    

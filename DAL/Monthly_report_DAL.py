@@ -16,7 +16,7 @@ class Monthly_report_DAL:
                     DATE(ngay_giao_dich) AS ngay,
                     SUM(CASE WHEN loai_giao_dich = 'mo' THEN 1 ELSE 0 END) AS so_mo,
                     SUM(CASE WHEN loai_giao_dich = 'dong' THEN 1 ELSE 0 END) AS so_dong
-                FROM giao_dich
+                FROM GiaoDich
                 WHERE strftime('%m', ngay_giao_dich) = ? AND strftime('%Y', ngay_giao_dich) = ?
                 GROUP BY DATE(ngay_giao_dich)
                 ORDER BY DATE(ngay_giao_dich)
