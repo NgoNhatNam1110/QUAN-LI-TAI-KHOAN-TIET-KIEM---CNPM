@@ -16,3 +16,11 @@ class Create_deposit_slip_BUS:
         except Exception as e:
             print(f"Error in BUS layer: {e}")
             return False
+    
+    def GetKhachHang(self, maso):
+        try:
+            khachhang = self.create_deposit_slip_dal.getKhachHang(maso)
+            return khachhang
+        except Exception as e:
+            print(f"Error in business layer: {e}")
+            return None

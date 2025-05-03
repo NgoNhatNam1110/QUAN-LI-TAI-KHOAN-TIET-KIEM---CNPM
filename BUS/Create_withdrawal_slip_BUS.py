@@ -24,3 +24,19 @@ class Create_withdrawal_slip_BUS:
         except Exception as e:
             print(f"Error in business layer: {e}")
             return None
+
+    def GetBalance(self, maso):
+        try:
+            current_balance = self.create_withdrawal_slip_dal.getBalance(maso)
+            return current_balance
+        except Exception as e:
+            print(f"Error in business layer: {e}")
+            return None
+        
+    def GetKhachHang(self, maso):
+        try:
+            khachhang = self.create_withdrawal_slip_dal.getKhachHang(maso)
+            return khachhang
+        except Exception as e:
+            print(f"Error in business layer: {e}")
+            return None
