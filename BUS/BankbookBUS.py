@@ -52,3 +52,17 @@ class BankbookBUS:
         except Exception as e:
             print(f"Error in business layer: {e}")
             return "Đã xảy ra lỗi khi kiểm tra số tiền gửi."
+    
+    def generate_new_maso(self):
+        """Generate a new account number based on the maximum account number"""
+        try:
+            max_maso = self.bankbook_dal.get_max_maso()
+            if max_maso:
+                max_number = int(max_maso[3:])  # Lấy phần số sau "STK"
+                new_maso = f"STK{max_number + 1:010}"  # Tăng số và định dạng lại
+            else:
+                new_maso = "STK0000000001"  # Mã số đầu tiên nếu chưa có dữ liệu
+            return new_maso
+        except Exception as e:
+            print(f"Error generating new account number: {e}")
+            return None
