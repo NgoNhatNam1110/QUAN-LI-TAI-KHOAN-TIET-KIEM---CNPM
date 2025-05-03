@@ -110,6 +110,14 @@ class Prepare_monthly_report_GUI:
                                    **button_style)
         reset_button.pack(side="left", padx=10)
 
+        monthly_report_button = ctk.CTkButton(button_frame,
+                                               text="Báo cáo tháng", 
+                                               command=self.show_monthly_report,
+                                               fg_color=("#1E3A8A", "#2B4F8C"),
+                                               hover_color=("#2B4F8C", "#1E3A8A"),
+                                               **button_style)
+        monthly_report_button.pack(side="left", padx=10)
+
     def create_table(self):
         """Create the table container and headers"""
         # Destroy existing table if it exists
@@ -162,7 +170,7 @@ class Prepare_monthly_report_GUI:
             
             if not data:
                 print("No data found for the selected date")
-                # self.clear_table()
+                self.clear_table()
                 return
 
             # Ensure table exists and is clear
@@ -249,5 +257,14 @@ class Prepare_monthly_report_GUI:
         formatted_date = date_obj.strftime("%Y-%m-%d")
         self.selected_date_label.configure(text=formatted_date)
     
-    
-        
+    def show_monthly_report(self):
+        from GUI.Monthly_report_GUI import Monthly_report_GUI
+        # Clear the current frame
+        for widget in self.parent_frame.winfo_children():
+            widget.destroy()
+
+        monthly_report_screen = Monthly_report_GUI(self.parent_frame, self)
+        monthly_report_screen.pack(fill="both", expand=True)
+
+
+

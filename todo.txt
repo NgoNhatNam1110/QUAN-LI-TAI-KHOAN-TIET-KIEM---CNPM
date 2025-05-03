@@ -1,0 +1,7 @@
+| Task ID | Description   
+|---------|-----------------------------------------------------------------
+| 1       | Autofill name  / Nam  
+| 2       | Withdrawal rework / Nam
+| 3       | Unittest these 2 important functions: Change rules, Withdrawal / Đạt 
+| 4       | Docker (Deployment)
+| 5       | Report rework / Nam

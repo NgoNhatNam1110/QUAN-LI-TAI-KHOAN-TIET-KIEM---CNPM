@@ -56,3 +56,17 @@ class Create_deposit_slip_DAL:
         finally:
             if 'connection' in locals() and connection:
                 connection.close()
+    
+    def getKhachHang(self, maso):
+        try:
+            connection = self.db.connect()
+            cursor = connection.cursor()
+            cursor.execute("SELECT hoTen FROM SoTietKiem WHERE maSo = ?", (maso,))
+            khachhang = cursor.fetchone()[0]
+            return khachhang
+        except Exception as e:
+            print(f"Error fetching customer name: {e}")
+            return None
+        finally:
+            if 'connection' in locals() and connection:
+                connection.close()
