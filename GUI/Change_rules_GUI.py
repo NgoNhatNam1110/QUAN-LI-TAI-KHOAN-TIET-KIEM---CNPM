@@ -270,7 +270,6 @@ class Change_rules_GUI:
         for frame in row["frames"]:
             frame.configure(fg_color="#d3d3d3")
         self.selected_row = row
-        print("Selected row:", self.selected_row)
 
     def validate_input(self, tien_toithieu, ky_han, lai, tgian):
         """Validate the input data"""

@@ -121,6 +121,14 @@ class Create_deposit_slip_GUI:
                 )
                 return
 
+            # Validate the amount entered
+            if not self.validate_so_tien_gui(sotiengui):
+                messagebox.showerror(
+                    "Error",
+                    "Số tiền gửi không hợp lệ!"
+                )
+                return    
+
             # Call the business layer to handle the deposit slip creation
             result = self.create_deposit_slip_bus.create_deposit_slip(maso, khachhang, ngaygui, sotiengui)
 
@@ -165,3 +173,11 @@ class Create_deposit_slip_GUI:
 
         except Exception as e:
             print(f"Error loading account balance: {e}")
+    
+    def validate_so_tien_gui(self, sotiengui):
+        try:
+            # Check if the input is a valid number
+            float(sotiengui)
+            return True
+        except ValueError:
+            return False
