@@ -53,7 +53,18 @@ class Create_withdrawal_slip_GUI:
         khachhang_label = ctk.CTkLabel(row1_frame, text="Khách hàng:", **label_style)
         khachhang_label.pack(side="left", padx=5)
         self.khachhang_entry = ctk.CTkEntry(row1_frame, **entry_style)
+        self.khachhang_entry.bind("<FocusOut>", self.load_account_balance_and_customer_name)
         self.khachhang_entry.pack(side="left", expand=True, fill="x", padx=5)
+        self.khachhang_entry.configure(state="readonly")
+
+        sodu_label = ctk.CTkLabel(row1_frame, text="Số dư (VNĐ):", **label_style)
+        sodu_label.pack(side="left", padx=5)
+        self.sodu_entry = ctk.CTkEntry(row1_frame, **entry_style)
+        self.sodu_entry.pack(side="left", expand=True, fill="x", padx=5)
+        self.maso_entry.bind("<FocusOut>", self.load_account_balance_and_customer_name)
+
+        self.sodu_entry.configure(state="readonly")
+
 
         # Row 2
         row2_frame = ctk.CTkFrame(form_frame, fg_color="transparent")
@@ -152,3 +163,35 @@ class Create_withdrawal_slip_GUI:
         except Exception as e:
             print(f"Error clearing fields: {e}")
     
+    def load_account_balance_and_customer_name(self, event=None):
+        try:
+            maso = self.maso_entry.get()
+            if not maso:
+                return
+
+            # Call the business layer to get the account balance
+            balance = self.create_withdrawal_slip_bus.GetBalance(maso)
+            customer_name = self.create_withdrawal_slip_bus.GetKhachHang(maso)
+            if customer_name is not None:
+                self.khachhang_entry.configure(state="normal")  # Enable the entry to update the value
+                self.khachhang_entry.delete(0, "end")
+                self.khachhang_entry.insert(0, customer_name)  # Set the customer name
+                self.khachhang_entry.configure(state="readonly")  # Set back to readonly
+            else:
+                messagebox.showerror("Lỗi", "Không tìm thấy khách hàng cho mã số này!")
+                self.khachhang_entry.configure(state="normal")
+                self.khachhang_entry.delete(0, "end")
+                self.khachhang_entry.configure(state="readonly")
+
+            if balance is not None:
+                self.sodu_entry.configure(state="normal")  # Enable the entry to update the value
+                self.sodu_entry.delete(0, "end")
+                self.sodu_entry.insert(0, f"{balance:,}")  # Format the balance with commas
+                self.sodu_entry.configure(state="readonly")  # Set back to readonly
+            else:
+                messagebox.showerror("Lỗi", "Không tìm thấy số dư cho mã số này!")
+                self.sodu_entry.configure(state="normal")
+                self.sodu_entry.delete(0, "end")
+                self.sodu_entry.configure(state="readonly")
+        except Exception as e:
+            print(f"Error loading account balance: {e}")

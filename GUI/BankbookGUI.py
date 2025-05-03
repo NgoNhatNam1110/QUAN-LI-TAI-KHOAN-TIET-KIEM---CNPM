@@ -130,9 +130,9 @@ class BankbookGUI(ctk.CTk):
         title_frame.pack(pady=20, padx=20, fill="x")
         
         title_label = ctk.CTkLabel(title_frame, 
-                                  text="Mở Sổ Tiết Kiệm", 
-                                  font=ctk.CTkFont(size=24, weight="bold", family="Segoe UI"),
-                                  text_color=("#FFFFFF", "#FFFFFF"))
+                                text="Mở Sổ Tiết Kiệm", 
+                                font=ctk.CTkFont(size=24, weight="bold", family="Segoe UI"),
+                                text_color=("#FFFFFF", "#FFFFFF"))
         title_label.pack(pady=20)
 
         # Main form with card-like appearance
@@ -161,13 +161,17 @@ class BankbookGUI(ctk.CTk):
         
         maso_label = ctk.CTkLabel(row1_frame, text="Mã số:", **label_style)
         maso_label.pack(side="left", padx=5)
+
+        # Automatically generate the account number
+        generated_maso = self.auto_increase_maso()
         self.maso_entry = ctk.CTkEntry(row1_frame, **entry_style)
+        self.maso_entry.insert(0, generated_maso if generated_maso else "Không thể tạo mã số")
+        self.maso_entry.configure(state='readonly')  # Set to readonly
         self.maso_entry.pack(side="left", expand=True, fill="x", padx=5)
-        
+
         loaitk_label = ctk.CTkLabel(row1_frame, text="Loại tiết kiệm:", **label_style)
         loaitk_label.pack(side="left", padx=5)
         self.selected_option = ctk.StringVar(value="3 tháng")
-        # options = ["3 tháng", "6 tháng", "Không kỳ hạn"]
         options = self.bankbook_bus.GetInterestOptions()
         dropdown = ctk.CTkOptionMenu(row1_frame, 
                                     variable=self.selected_option, 
@@ -284,6 +288,12 @@ class BankbookGUI(ctk.CTk):
             if not self.checkminimumDeposit(loaitk, sotiengui):
                 self.sotiengui_entry.focus()
                 return
+            
+            # Validate customer name
+            if not self.checkCustomerName(khachhang):
+                messagebox.showerror("Error", "Tên khách hàng không hợp lệ!")
+                self.khachhang_entry.focus()
+                return
 
             # Insert record
             result = self.bankbook_bus.insert_new_record(
@@ -292,6 +302,10 @@ class BankbookGUI(ctk.CTk):
 
             if result:
                 messagebox.showinfo("Thành công", "Mở sổ tiết kiệm thành công")
+                self.clear_bankbook_fields()
+                self.maso_entry.configure(state='normal')
+                self.maso_entry.delete(0, "end")
+                self.maso_entry.insert(0, self.auto_increase_maso())
             else:
                 messagebox.showerror("Error", "Không thể mở sổ tiết kiệm")
         except Exception as e:
@@ -357,21 +371,40 @@ class BankbookGUI(ctk.CTk):
         check = self.bankbook_bus.checkmaso(maso)
         return check
     
-    def checkdinhdangMaSo(self, maso):
-        pattern = r"STK^\d{10}$"
-        check = bool(re.match(pattern, maso))
-        if check == False :
-            messagebox.showerror("Error","Sai định dạng MaSoTK, vui lòng nhập đúng định dạng: STKxxxxxxxxxx")
-            print(check)
-            return False
-        else :
-            return True
+    # def checkdinhdangMaSo(self, maso):
+    #     pattern = r"^STK\d{10}$"
+    #     check = bool(re.match(pattern, maso))
+    #     if check == False :
+    #         print(check)
+    #         return False
+    #     else :
+    #         return True
 
     def change_rules(self):
         """Display rules change screen"""
         self.clear_right_frame()
         Change_rules_GUI.Change_rules_GUI(self.right_frame)
 
+    def auto_increase_maso(self, event=None):
+        """Automatically increase the account number when the entry is focused"""
+        try:
+            new_maso = self.bankbook_bus.generate_new_maso()
+            if new_maso:
+                return new_maso
+            else:
+                messagebox.showerror("Lỗi", "Không thể tạo mã số mới. Vui lòng thử lại!")
+                return None
+        except Exception as e:
+            print(f"Error generating account number in GUI: {e}")
+        return None
+    
+    def checkCustomerName(self, khachhang):
+        """Check if the customer name is valid"""
+        pattern = r"^[a-zA-Z\s]+$"
+        check = bool(re.match(pattern, khachhang))
+        if not check:
+            return False
+        return True
     
 # if __name__ == "__main__":
 #     app = BankbookGUI()

@@ -110,4 +110,31 @@ class Create_withdrawal_slip_DAL:
         else :
             return True
     
+    def getBalance(self, maso):
+        try:
+            connection = self.db.connect()
+            cursor = connection.cursor()
+            cursor.execute("SELECT SoDu FROM SoTietKiem WHERE maSo = ?", (maso,))
+            current_balance = cursor.fetchone()[0]
+            return current_balance
+        except Exception as e:
+            print(f"Error fetching balance: {e}")
+            return None
+        finally:
+            if 'connection' in locals() and connection:
+                connection.close()
+    
+    def getKhachHang(self, maso):
+        try:
+            connection = self.db.connect()
+            cursor = connection.cursor()
+            cursor.execute("SELECT hoTen FROM SoTietKiem WHERE maSo = ?", (maso,))
+            khachhang = cursor.fetchone()[0]
+            return khachhang
+        except Exception as e:
+            print(f"Error fetching customer name: {e}")
+            return None
+        finally:
+            if 'connection' in locals() and connection:
+                connection.close()
         
