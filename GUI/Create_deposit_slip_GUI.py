@@ -56,7 +56,9 @@ class Create_deposit_slip_GUI:
         khachhang_label = ctk.CTkLabel(row1_frame, text="Khách hàng:", **label_style)
         khachhang_label.pack(side="left", padx=5)
         self.khachhang_entry = ctk.CTkEntry(row1_frame, **entry_style)
+        self.khachhang_entry.bind("<FocusOut>", self.load_customer_name)
         self.khachhang_entry.pack(side="left", expand=True, fill="x", padx=5)
+        self.khachhang_entry.configure(state="readonly")
 
         # Row 2
         row2_frame = ctk.CTkFrame(form_frame, fg_color="transparent")
@@ -119,6 +121,14 @@ class Create_deposit_slip_GUI:
                 )
                 return
 
+            # Validate the amount entered
+            if not self.validate_so_tien_gui(sotiengui):
+                messagebox.showerror(
+                    "Error",
+                    "Số tiền gửi không hợp lệ!"
+                )
+                return    
+
             # Call the business layer to handle the deposit slip creation
             result = self.create_deposit_slip_bus.create_deposit_slip(maso, khachhang, ngaygui, sotiengui)
 
@@ -141,3 +151,33 @@ class Create_deposit_slip_GUI:
             print("Fields cleared successfully")
         except Exception as e:
             print(f"Error clearing fields: {e}")
+    
+    def load_customer_name(self, event=None):
+        try:
+            maso = self.maso_entry.get()
+            if not maso:
+                return
+
+            # Call the business layer to get the customer name
+            customer_name = self.create_deposit_slip_bus.GetKhachHang(maso)
+            if customer_name is not None:
+                self.khachhang_entry.configure(state="normal")  # Enable the entry to update the value
+                self.khachhang_entry.delete(0, "end")
+                self.khachhang_entry.insert(0, customer_name)  # Set the customer name
+                self.khachhang_entry.configure(state="readonly")  # Set back to readonly
+            else:
+                messagebox.showerror("Lỗi", "Không tìm thấy khách hàng cho mã số này!")
+                self.khachhang_entry.configure(state="normal")
+                self.khachhang_entry.delete(0, "end")
+                self.khachhang_entry.configure(state="readonly")
+
+        except Exception as e:
+            print(f"Error loading account balance: {e}")
+    
+    def validate_so_tien_gui(self, sotiengui):
+        try:
+            # Check if the input is a valid number
+            float(sotiengui)
+            return True
+        except ValueError:
+            return False
