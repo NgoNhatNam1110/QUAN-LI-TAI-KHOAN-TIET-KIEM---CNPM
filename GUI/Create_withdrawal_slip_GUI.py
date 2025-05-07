@@ -2,7 +2,6 @@ import customtkinter as ctk
 from tkinter import messagebox
 from datetime import datetime
 from BUS.Create_withdrawal_slip_BUS import Create_withdrawal_slip_BUS
-import BankbookGUI
 
 class Create_withdrawal_slip_GUI:
     def __init__(self, parent_frame):
@@ -156,8 +155,10 @@ class Create_withdrawal_slip_GUI:
             result = self.create_withdrawal_slip_bus.create_withdrawal_slip(maso, khachhang, ngayrut, sotienrut, kyhansaukhirut)
 
             if result:
-                messagebox.showinfo("Success","Lập phiếu rút tiền thành công!")
+                messagebox.showinfo("Success", "Lập phiếu rút tiền thành công!")
                 self.clear_fields()
+            else:
+                messagebox.showerror("Lỗi", "Lập phiếu rút tiền thất bại!")
         except Exception as e:
             print(f"Error during withdrawal slip event: {e}")
 
