@@ -40,4 +40,10 @@ pip install -r requirements.txt
 
 ---
 
+## Báo cáo PPT
+
+- [File powerpoint]
+- (https://www.canva.com/design/DAGlWQ2M9Nk/Nm8XIsh8G7Ly1WQIuSuVBg/edit?utm_content=DAGlWQ2M9Nk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
+
+---
 
