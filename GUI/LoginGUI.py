@@ -46,11 +46,24 @@ class LoginGUI:
             result = self.login_bus.validate_login(username, password)
 
             if result:  # If a matching record is found
-                user_id, username, password = result  # Extract ID, username, and password
-                print("Login successful")
-                self.window.destroy()  # Close the login window
-                bankbook_gui = BankbookGUI(user_id, username, password)  # Pass ID, username, and password to BankbookGUI
-                bankbook_gui.mainloop()
+                user_id, username, password, role = result  # Extract ID, username, password, and role
+                print(f"Login successful. Role: {role}")
+                self.window.withdraw()  # Ẩn cửa sổ chính thay vì đóng nó
+
+                # Open the appropriate GUI based on the role
+                if role == "Nhan vien":
+                    bankbook_gui = BankbookGUI(user_id, username, password)
+                    bankbook_gui.mainloop()
+                elif role == "Quan li":
+                    from Change_rules_GUI import Change_rules_GUI
+                    change_rules_gui = Change_rules_GUI(self.window, user_id, username, password)
+                    change_rules_gui.mainloop()
+                elif role == "Kiem toan":
+                    from Prepare_monthly_report_GUI import Prepare_monthly_report_GUI
+                    prepare_report_gui = Prepare_monthly_report_GUI(self.window, user_id, username, password)
+                    prepare_report_gui.mainloop()
+                else:
+                    print("Invalid role")
             else:
                 print("Invalid credentials")
                 # Optionally, show an error message to the user

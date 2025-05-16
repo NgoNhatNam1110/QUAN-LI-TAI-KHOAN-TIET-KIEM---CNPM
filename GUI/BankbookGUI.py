@@ -97,17 +97,17 @@ class BankbookGUI(ctk.CTk):
                                                    **button_style)
         self.lookup_bankbook_button.pack(pady=10, padx=10, fill="x")
 
-        self.prepare_monthly_report_button = ctk.CTkButton(self.left_frame, 
-                                                          text="Lập báo cáo tháng", 
-                                                          command=self.prepare_monthly_report,
-                                                          **button_style)
-        self.prepare_monthly_report_button.pack(pady=10, padx=10, fill="x")
+        # self.prepare_monthly_report_button = ctk.CTkButton(self.left_frame, 
+        #                                                   text="Lập báo cáo tháng", 
+        #                                                   command=self.prepare_monthly_report,
+        #                                                   **button_style)
+        # self.prepare_monthly_report_button.pack(pady=10, padx=10, fill="x")
 
-        self.change_rules_button = ctk.CTkButton(self.left_frame, 
-                                                text="Thay đổi quy định", 
-                                                command=self.change_rules,
-                                                **button_style)
-        self.change_rules_button.pack(pady=10, padx=10, fill="x")
+        # self.change_rules_button = ctk.CTkButton(self.left_frame, 
+        #                                         text="Thay đổi quy định", 
+        #                                         command=self.change_rules,
+        #                                         **button_style)
+        # self.change_rules_button.pack(pady=10, padx=10, fill="x")
 
         # Right frame for content with gradient background
         self.right_frame = ctk.CTkFrame(self, corner_radius=0, fg_color=("#FFFFFF", "#1E3A8A"))

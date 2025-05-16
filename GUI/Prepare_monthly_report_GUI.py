@@ -267,4 +267,3 @@ class Prepare_monthly_report_GUI:
         monthly_report_screen.pack(fill="both", expand=True)
 
 
-
