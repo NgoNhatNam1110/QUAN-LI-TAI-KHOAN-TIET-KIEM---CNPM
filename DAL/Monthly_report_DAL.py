@@ -13,13 +13,13 @@ class Monthly_report_DAL:
             # Query to fetch data
             query = """
                 SELECT 
-                    DATE(ngay_giao_dich) AS ngay,
-                    SUM(CASE WHEN loai_giao_dich = 'mo' THEN 1 ELSE 0 END) AS so_mo,
-                    SUM(CASE WHEN loai_giao_dich = 'dong' THEN 1 ELSE 0 END) AS so_dong
+                    DATE(ngayGiaoDich) AS ngay,
+                    SUM(CASE WHEN loaiGiaoDich = 'mo' THEN 1 ELSE 0 END) AS so_mo,
+                    SUM(CASE WHEN loaiGiaoDich = 'dong' THEN 1 ELSE 0 END) AS so_dong
                 FROM GiaoDich
-                WHERE strftime('%m', ngay_giao_dich) = ? AND strftime('%Y', ngay_giao_dich) = ?
-                GROUP BY DATE(ngay_giao_dich)
-                ORDER BY DATE(ngay_giao_dich)
+                WHERE strftime('%m', ngayGiaoDich) = ? AND strftime('%Y', ngayGiaoDich) = ?
+                GROUP BY DATE(ngayGiaoDich)
+                ORDER BY DATE(ngayGiaoDich)
             """
             cursor.execute(query, (month, year))
             rows = cursor.fetchall()
