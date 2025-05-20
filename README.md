@@ -71,7 +71,7 @@ Hệ thống đã được kiểm thử tự động với các loại kiểm th
 
 #### 2. Khởi động VcXsrv
 
-- Mở VcXsrv, chọn "Multiple windows", nhấn Next cho đến khi hoàn tất, và **bật tùy chọn "Disable access control"**.
+- Mở VcXsrv, chọn "Multiple windows", nhấn Next cho gần đến khi hoàn tất, và **bật tùy chọn "Disable access control"**.
 
 #### 3. Xác định địa chỉ IP của máy tính Windows
 
