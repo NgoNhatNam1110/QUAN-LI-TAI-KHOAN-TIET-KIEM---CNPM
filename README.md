@@ -21,18 +21,6 @@ Dự án **Quản Lý Tài Khoản Tiết Kiệm** nhằm xây dựng một hệ
 
 ---
 
-## Dòng thời gian dự án (Tuần 1 → Tuần 14)
-
-Tuần:        1    2    3    4    5    6    7    8    9   10   11   12   13   14
-            ─┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────
-Giai đoạn:  ██████████████  Waterfall       │ 🔁 Bắt đầu Agile ▷ ▷ ▷ ▷ ▷ ▷ ▷ ▷
-Hoạt động:  📋 Lập KH + Thiết kế            │ 🔄 Sprint 1 → 7: Code + Test + Feedback
-Git flow:   ⎇ Nhánh riêng, ít merge         │ ⎇ Nhánh riêng, merge thường xuyên
-Họp nhóm:   🔇 Không thường xuyên           │ 📅 Họp sprint hàng tuần
-Theo dõi:   📄 Tài liệu tay, commit lớn     │ 📌 GitHub Issues + Pull requests
-
----
-
 ## Kiểm thử phần mềm
 
 Hệ thống đã được kiểm thử tự động với các loại kiểm thử sau:
