@@ -21,6 +21,28 @@ Hệ thống đã được kiểm thử tự động với các loại kiểm th
 
 ## Triển khai phần mềm
 
+Ứng dụng được đóng gói dưới dạng Docker image và có thể chạy trên mọi hệ điều hành có hỗ trợ Docker.
+
+👉 **Image Docker**  
+Docker Hub: `datnham0212/quanly-tietkiem`
+
+### ⚙️ Các bước triển khai
+
+1. **Cài đặt Docker trên máy (Windows, macOS hoặc Linux):**  
+   https://www.docker.com/products/docker-desktop
+
+2. **Tải image từ Docker Hub:**
+   ```bash
+   docker pull datnham0212/quanly-tietkiem
+
+3. **Chạy ứng dụng:**
+    ```bash
+    docker run datnham0212/quanly-tietkiem
+
+🔺 Lưu ý: Ứng dụng có giao diện đồ họa (GUI), vì vậy cần thiết lập display phù hợp nếu chạy trong môi trường Docker. Khuyến nghị chạy trực tiếp trên máy thật trong quá trình phát triển hoặc thử nghiệm.  
+Hoặc sử dụng VcXsrv (có hướng dẫn ở file `schedule.md`) để thiết lập display.
+---
+
 ## Báo cáo PPT
 
 - [File powerpoint](https://www.canva.com/design/DAGlWQ2M9Nk/Nm8XIsh8G7Ly1WQIuSuVBg/edit?utm_content=DAGlWQ2M9Nk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
