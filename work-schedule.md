@@ -1,10 +1,10 @@
 ## 📅 Lịch Sử Phát Triển Dự Án & Quy trình làm việc nhóm
 
 ## 📌 Thành viên nhóm
-- Nhâm Minh Đạt
-- Ngô Nhật Nam
-- Nguyễn Chí Tân
-- Nguyễn Tuấn Long
+- Nhâm Minh Đạt - 3121411052
+- Ngô Nhật Nam - 3121411136
+- Nguyễn Chí Tân - 3121411192
+- Nguyễn Tuấn Long - 3121411125
 
 ---
 
