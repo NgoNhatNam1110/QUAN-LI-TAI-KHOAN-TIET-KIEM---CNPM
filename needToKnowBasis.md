@@ -1,5 +1,3 @@
-# 📅 Lịch trình dự án & Quy trình làm việc nhóm
-
 ## 📄 Tài liệu dự án
 - [Đề xuất dự án](https://docs.google.com/document/d/153xh0cEmbYlkVlcoY1W4nTPBzntlDcRmDmL-hXv4CYE/edit?usp=sharing)
 - [Kế hoạch dự án](https://docs.google.com/document/d/1MdLO3yEn-LvBMJ8tdqb9geIdqbVyi-BI8f3mQRcgHt8/edit?usp=sharing)
