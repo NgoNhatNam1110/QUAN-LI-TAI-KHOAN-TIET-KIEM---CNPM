@@ -6,55 +6,14 @@ Dự án **Quản Lý Tài Khoản Tiết Kiệm** nhằm xây dựng một hệ
 
 ---
 
-## Quy trình làm việc nhóm
-
-- **Khi commit, hãy thông báo cho cả nhóm.**
-- **Luôn cập nhật code mới nhất trước khi làm việc:**
-  ```bash
-  git fetch origin
-  git rebase origin/main
-  git pull
-  ```
-
----
-
-## Các bài lab
-
-- [Tổng hợp các bài lab](https://drive.google.com/drive/folders/1kXrWVUvHAVzwAi-PhuXUS5f_ch7qbP1H?usp=sharing)
-
----
-
-## Yêu cầu
-
-- Python 3.x
-- Các thư viện trong `requirements.txt`
-
----
-
-## Cài đặt thư viện Python
-
-Chạy lệnh sau trong terminal:
-```bash
-pip install -r requirements.txt
-```
-
----
-
 ## Kiểm thử phần mềm
 
 Hệ thống đã được kiểm thử tự động với các loại kiểm thử sau:
 
-- **Unit Test:**  
-  Kiểm thử từng lớp riêng biệt (DAL, BUS, GUI) với các trường hợp thành công, thất bại, ngoại lệ, dữ liệu biên và dữ liệu không hợp lệ.
-
-- **Integration Test:**  
-  Kiểm thử luồng tích hợp giữa các lớp (GUI ↔ BUS ↔ DAL), đảm bảo dữ liệu và lỗi được truyền đúng, các chức năng hoạt động xuyên suốt.
-
-- **Các trường hợp kiểm thử chính:**  
-  - Lập phiếu rút tiền thành công.
-  - Thiếu trường thông tin, nhập sai định dạng, số tiền rút vượt quá số dư, hoặc nhỏ hơn mức tối thiểu.
-  - Kiểm tra lấy thông tin khách hàng, số dư, danh sách kỳ hạn.
-  - Kiểm thử các hàm phụ trợ và xử lý ngoại lệ.
+| Loại kiểm thử      | Mô tả                                                                                                                        | Các trường hợp chính                                                                                                    |
+|--------------------|------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------|
+| **Unit Test**      | Kiểm thử từng lớp riêng biệt (DAL, BUS, GUI) với các trường hợp thành công, thất bại, ngoại lệ, dữ liệu biên và không hợp lệ. | - Lập phiếu rút tiền thành công<br>- Thiếu trường thông tin, nhập sai định dạng<br>- Số tiền rút vượt quá số dư<br>- Số tiền rút nhỏ hơn mức tối thiểu<br>- Kiểm tra lấy thông tin khách hàng, số dư, danh sách kỳ hạn<br>- Kiểm thử các hàm phụ trợ và xử lý ngoại lệ |
+| **Integration Test** | Kiểm thử luồng tích hợp giữa các lớp (GUI ↔ BUS ↔ DAL), đảm bảo dữ liệu và lỗi được truyền đúng, các chức năng hoạt động xuyên suốt. | - Lập phiếu rút tiền thành công<br>- Truyền dữ liệu và lỗi giữa các lớp<br>- Kiểm thử các luồng chức năng chính |
 
 > Xem thư mục `tests/` để biết chi tiết các trường hợp kiểm thử.
 
