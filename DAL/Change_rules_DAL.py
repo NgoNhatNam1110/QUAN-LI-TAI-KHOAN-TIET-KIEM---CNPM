@@ -119,3 +119,14 @@ class ChangeRulesDAL:
             return count
         finally:
             self.db.close(connection)
+
+    def validate_loaitk(self, loaiTK):
+        try:
+            connection = self.db.connect()
+            cursor = connection.cursor()
+            cursor.execute("SELECT COUNT(*) FROM LoaiTietKiem WHERE loaiTietKiem = ?", (loaiTK,))
+            count = cursor.fetchone()[0]
+            return count > 0
+        finally:
+            self.db.close(connection)
+    

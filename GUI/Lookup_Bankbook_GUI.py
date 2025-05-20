@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from BUS.Lookup_Bankbook_BUS import Lookup_Bankbook_BUS
+from BUS.BankbookBUS import BankbookBUS
 
 class Lookup_Bankbook_GUI:
     def __init__(self, parent_frame):
@@ -65,17 +66,19 @@ class Lookup_Bankbook_GUI:
         loai_tk_label = ctk.CTkLabel(loai_tk_frame, text="Loại tiết kiệm:", **label_style)
         loai_tk_label.pack(side="left", padx=5)
         self.loai_tk_var = ctk.StringVar(value="Tất cả")
+        bankbook_bus = BankbookBUS()  # Create an instance of BankbookBUS
         self.loai_tk_combo = ctk.CTkComboBox(
             loai_tk_frame, 
             width=150,
-            values=["Tất cả", "3 tháng", "6 tháng", "Không kỳ hạn"],
+            values=bankbook_bus.GetInterestOptions(),  # Call the method on the instance
+            state="readonly",
             variable=self.loai_tk_var,
             corner_radius=8,
             font=ctk.CTkFont(size=14, family="Segoe UI"),
             fg_color=("#FFFFFF", "#1E3A8A"),
             button_color=("#1E3A8A", "#2B4F8C"),
             button_hover_color=("#2B4F8C", "#1E3A8A"),
-            text_color=("#1E3A8A", "#FFFFFF")
+            text_color=("#1E3A8A", "#FFFFFF"),
         )
         self.loai_tk_combo.pack(side="left", padx=5)
 

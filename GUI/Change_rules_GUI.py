@@ -1,20 +1,83 @@
 import customtkinter as ctk
-import sqlite3
-from utils.db_utils import DatabaseConnection
-from BUS.Change_rules_BUS import ChangeRulesBUS  # Import the BUS layer
+from tkinter import messagebox
+from BUS.Change_rules_BUS import ChangeRulesBUS
 
-class Change_rules_GUI:
-    def __init__(self, parent_frame):
+class Change_rules_GUI(ctk.CTk):
+    def __init__(self, parent_frame, user_id, username, password):
+        super().__init__()
+
+        # Store parent frame
         self.parent_frame = parent_frame
-        self.bus = ChangeRulesBUS()  # Use the BUS layer
-        self.table_container = None
+
+        # Store user information
+        self.user_id = user_id
+        self.username = username
+        self.password = password
+
+        self.bus = ChangeRulesBUS()
         self.selected_row = None
+
+        # Configure window
+        self.title("Thay Đổi Quy Định")
+        self.geometry("1200x800")
+
+        # Configure grid
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=1)
+
+        # Set appearance
+        ctk.set_appearance_mode("light")
+        ctk.set_default_color_theme("blue")
+
+        # Left frame for navigation
+        self.left_frame = ctk.CTkFrame(self, width=200, corner_radius=0, fg_color=("#F0F8FF", "#1E3A8A"))
+        self.left_frame.grid(row=0, column=0, sticky="nsew")
+
+        # Account information section
+        account_card = ctk.CTkFrame(self.left_frame, corner_radius=15, fg_color=("#FFFFFF", "#2B4F8C"))
+        account_card.pack(pady=20, padx=10, fill="x")
+
+        self.account_detail_label = ctk.CTkLabel(account_card, 
+                                                text="Thông Tin Tài Khoản", 
+                                                font=ctk.CTkFont(size=18, weight="bold", family="Segoe UI"),
+                                                text_color=("#1E3A8A", "#FFFFFF"))
+        self.account_detail_label.pack(pady=10)
+
+        # Navigation buttons
+        button_style = {
+            "corner_radius": 10,
+            "font": ctk.CTkFont(size=14, family="Segoe UI"),
+            "hover": True,
+            "fg_color": ("#1E3A8A", "#2B4F8C"),
+            "text_color": ("#FFFFFF", "#FFFFFF"),
+            "height": 40
+        }
+
+        self.change_rules_button = ctk.CTkButton(self.left_frame, 
+                                                text="Thay đổi quy định", 
+                                                command=self.create_screen_change_rules,
+                                                **button_style)
+        self.change_rules_button.pack(pady=10, padx=10, fill="x")
+
+        # Right frame for content
+        self.right_frame = ctk.CTkFrame(self, corner_radius=0, fg_color=("#FFFFFF", "#1E3A8A"))
+        self.right_frame.grid(row=0, column=1, sticky="nsew")
+
+        # Display default screen
         self.create_screen_change_rules()
-    
+
+    def clear_right_frame(self):
+        """Clear all widgets in the right frame"""
+        for widget in self.right_frame.winfo_children():
+            widget.destroy()
+
     def create_screen_change_rules(self):
         """Create the main change rules screen"""
+        # Clear the right frame
+        self.clear_right_frame()
+
         # Main container with gradient background
-        main_container = ctk.CTkFrame(self.parent_frame, fg_color=("#F0F8FF", "#1E3A8A"))
+        main_container = ctk.CTkFrame(self.right_frame, fg_color=("#F0F8FF", "#1E3A8A"))
         main_container.pack(padx=20, pady=20, fill="both", expand=True)
 
         # Header and Title
@@ -86,7 +149,7 @@ class Change_rules_GUI:
         self.fetch_and_display_data()
 
         # Table headers
-        headers = ["Mã Quy Định", "Tên Loại Tiết Kiệm", "Tiền Gửi Tối Thiểu", "Kỳ Hạn (tháng)", "Lãi Suất (%)", "Thời Gian Gửi Tối Thiểu"]
+        headers = ["Mã Quy Định", "Tên Loại Tiết Kiệm", "Tiền Gửi Tối Thiểu", "Kỳ Hạn (tháng)", "Lãi Suất", "Thời Gian Gửi Tối Thiểu"]
         for col, header in enumerate(headers):
             header_frame = ctk.CTkFrame(self.table_container, fg_color=("#1E3A8A", "#2B4F8C"), corner_radius=8)
             header_frame.grid(row=0, column=col, sticky="nsew", padx=(0, 1), pady=(0, 1))
@@ -139,6 +202,7 @@ class Change_rules_GUI:
             self.populate_table(data)
         except Exception as e:
             print(f"Error fetching and displaying data: {e}")
+            messagebox.showerror("Error", "Không thể tải dữ liệu quy định!")
 
     def clear_frame(self):
         for widget in self.parent_frame.winfo_children():
@@ -165,7 +229,7 @@ class Change_rules_GUI:
         add_window.title("Thêm quy định mới")
         add_window.attributes('-topmost', True)
         entries = {}
-        headers = ["Tên Loại Tiết Kiệm", "Tiền Gửi Tối Thiểu", "Kỳ Hạn (tháng)", "Lãi Suất (%)", "Thời Gian Gửi Tối Thiểu"]
+        headers = ["Tên Loại Tiết Kiệm", "Tiền Gửi Tối Thiểu", "Kỳ Hạn (tháng)", "Lãi Suất", "Thời Gian Gửi Tối Thiểu"]
         for i, header in enumerate(headers):
             label = ctk.CTkLabel(add_window, text=header)
             label.grid(row=i, column=0, padx=10, pady=5)
@@ -174,6 +238,17 @@ class Change_rules_GUI:
             entries[header] = entry
         
         def save_new_rule():
+            values = {key: entry.get() for key, entry in entries.items()}
+            # Retrieve the value of "Tên Loại Tiết Kiệm"
+            loaitk = values["Tên Loại Tiết Kiệm"]
+            # Validate the inputs
+            if not self.validate_loaitk(loaitk):
+                messagebox.showerror("Lỗi", "Đã tồn tại loại tiết kiệm này!")
+            elif not self.validate_input(values["Tiền Gửi Tối Thiểu"], values["Kỳ Hạn (tháng)"], values["Lãi Suất"], values["Thời Gian Gửi Tối Thiểu"]):
+                print(values["Tiền Gửi Tối Thiểu"], values["Kỳ Hạn (tháng)"], values["Lãi Suất"], values["Thời Gian Gửi Tối Thiểu"])
+                messagebox.showerror("Lỗi", "Vui lòng nhập đúng thông số!")
+                return
+
             values = [entry.get() for entry in entries.values()]
             try:
                 self.bus.add_new_rule(*values)  # Delegate to the BUS
@@ -196,7 +271,7 @@ class Change_rules_GUI:
         edit_window.title("Chỉnh sửa quy định")
         edit_window.attributes('-topmost', True)
         entries = {}
-        headers = ["Tên Loại Tiết Kiệm", "Tiền Gửi Tối Thiểu", "Kỳ Hạn (tháng)", "Lãi Suất (%)", "Thời Gian Gửi Tối Thiểu"]
+        headers = ["Tên Loại Tiết Kiệm", "Tiền Gửi Tối Thiểu", "Kỳ Hạn (tháng)", "Lãi Suất", "Thời Gian Gửi Tối Thiểu"]
         row_keys = ["loaiTK", "tien_toithieu", "ky_han", "lai", "tgian"]
         for i, (header, key) in enumerate(zip(headers, row_keys)):
             label = ctk.CTkLabel(edit_window, text=header)
@@ -209,8 +284,10 @@ class Change_rules_GUI:
             if header == "Tên Loại Tiết Kiệm":
                 entry.configure(state="readonly")
             entries[key] = entry
-        
+
         def save_changes():
+            if not self.validate_input(self.selected_row["tien_toithieu"], self.selected_row["ky_han"], self.selected_row["lai"], self.selected_row["tgian"]):
+                messagebox.showerror("Lỗi", "Vui lòng nhập đúng thông số!")
             updated_values = {key: entry.get() for key, entry in entries.items()}
             try:
                 self.bus.update_rule(
@@ -256,4 +333,26 @@ class Change_rules_GUI:
         for frame in row["frames"]:
             frame.configure(fg_color="#d3d3d3")
         self.selected_row = row
-        print("Selected row:", self.selected_row)
+
+    def validate_input(self, tien_toithieu, ky_han, lai, tgian):
+        """Validate the input data"""
+        try:
+            # Convert inputs to appropriate types
+            tien_toithieu = float(tien_toithieu)
+            ky_han = int(ky_han)
+            lai = float(lai)
+            tgian = int(tgian)
+
+            # Ensure all values are positive
+            if tien_toithieu <= 0 or ky_han <= 0 or lai <= 0 or tgian <= 0:
+                return False
+
+            return True
+        except ValueError:
+            # If conversion fails, return False
+            return False
+
+    def validate_loaitk(self, loaiTK):
+        # Kiểm tra xem loại tiết kiệm có tồn tại trong cơ sở dữ liệu hay không
+        return self.bus.validate_loaitk(loaiTK)
+

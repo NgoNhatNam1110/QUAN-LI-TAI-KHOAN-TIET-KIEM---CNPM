@@ -70,3 +70,30 @@ class BankbookDAL:
         except Exception as e:
             print(f"Error fetching interest options: {e}")
             return None
+        
+    def checkminimumDeposit(self, loaitk):
+        try:
+            connection = self.db.connect()
+            cursor = connection.cursor()
+            cursor.execute("SELECT tienGuiToiThieu FROM ThamSo WHERE loaiTietKiem = ?", (loaitk,))
+            minimum_deposit = cursor.fetchone()[0]
+            return minimum_deposit
+        except Exception as e:
+            print(f"Error checking minimum deposit: {e}")
+            return None
+    
+    def get_max_maso(self):
+        """Fetch the maximum account number (maSo) from the database"""
+        try:
+            connection = self.db.connect()
+            cursor = connection.cursor()
+            query = "SELECT MAX(maSo) FROM SoTietKiem"
+            cursor.execute(query)
+            result = cursor.fetchone()
+            return result[0] if result[0] else None
+        except Exception as e:
+            print(f"Error fetching max account number: {e}")
+            return None
+        finally:
+            if 'connection' in locals() and connection:
+                connection.close()

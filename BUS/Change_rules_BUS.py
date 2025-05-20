@@ -19,3 +19,9 @@ class ChangeRulesBUS:
     def delete_rule(self, maQD, loaiTK):
         """Delete a rule from the database."""
         self.dal.delete_rule(maQD, loaiTK)
+    
+    def validate_loaitk(self, loaiTK):
+        """Validate the type of savings."""
+        if self.dal.validate_loaitk(loaiTK):
+            return False
+        return True

@@ -11,8 +11,9 @@ class Login_DAL:
             cursor = connection.cursor()
 
             # Query the database for the entered credentials
-            query = "SELECT ID, NAME, PASSWORD FROM Admin WHERE NAME = ? AND PASSWORD = ?"
+            query = "SELECT ID, NAME, PASSWORD, ROLE FROM Admin WHERE NAME = ? AND PASSWORD = ?"
             cursor.execute(query, (username, password))
+            print(f"Executing query: {query} with params: {username}, {password}")
             result = cursor.fetchone()
 
             return result  # Return the result (None if no match found)
