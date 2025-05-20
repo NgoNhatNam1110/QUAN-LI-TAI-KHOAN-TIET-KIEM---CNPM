@@ -6,6 +6,19 @@ Dự án **Quản Lý Tài Khoản Tiết Kiệm** nhằm xây dựng một hệ
 
 ---
 
+## Công cụ sử dụng
+
+- **Ngôn ngữ lập trình:** Python 3.11 trở lên
+- **Thư viện giao diện:** customtkinter, tkcalendar
+- **Kết nối cơ sở dữ liệu:** pyodbc
+- **Kiểm thử:** unittest (thư viện chuẩn Python)
+- **Quản lý môi trường & đóng gói:** Docker
+- **Hệ quản trị cơ sở dữ liệu:** SQL Server (hoặc tương thích ODBC)
+- **Hỗ trợ hiển thị GUI trên Docker:** VcXsrv (Windows), XQuartz (macOS), X11 (Linux)
+- **Quản lý mã nguồn:** Git
+
+---
+
 ## Kiểm thử phần mềm
 
 Hệ thống đã được kiểm thử tự động với các loại kiểm thử sau:
@@ -46,6 +59,15 @@ Hoặc sử dụng VcXsrv (có hướng dẫn ở file `schedule.md`) để thi�
 ## Báo cáo PPT
 
 - [File powerpoint](https://www.canva.com/design/DAGlWQ2M9Nk/Nm8XIsh8G7Ly1WQIuSuVBg/edit?utm_content=DAGlWQ2M9Nk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
+
+---
+
+## Đóng góp & License
+
+Bạn được khuyến khích **fork** và **đóng góp** cho dự án này nếu thấy hữu ích hoặc muốn phát triển thêm.
+
+Dự án sử dụng giấy phép [MIT License](https://opensource.org/licenses/MIT):  
+Bạn có thể tự do sử dụng, sao chép, chỉnh sửa, phân phối lại hoặc tích hợp vào dự án khác, kể cả mục đích thương mại, chỉ cần giữ lại thông tin bản quyền gốc.
 
 ---
 
