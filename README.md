@@ -1,5 +1,7 @@
 # QUẢN LÝ TÀI KHOẢN TIẾT KIỆM
 
+> **License:** Dự án sử dụng giấy phép [MIT License](https://opensource.org/licenses/MIT) – bạn có thể tự do sử dụng, sao chép, chỉnh sửa, phân phối lại hoặc tích hợp vào dự án khác, kể cả mục đích thương mại, chỉ cần giữ lại thông tin bản quyền gốc.
+
 ## Giới thiệu
 
 Dự án **Quản Lý Tài Khoản Tiết Kiệm** nhằm xây dựng một hệ thống phần mềm hỗ trợ quản lý các tài khoản tiết kiệm tại ngân hàng. Ứng dụng cho phép tạo mới, chỉnh sửa, xóa và tra cứu thông tin tài khoản tiết kiệm, quản lý giao dịch gửi/rút tiền, tính lãi suất, và xuất báo cáo thống kê. Hệ thống hướng tới việc đơn giản hóa quy trình quản lý, nâng cao hiệu quả và độ chính xác cho nhân viên ngân hàng.
@@ -62,12 +64,4 @@ Hoặc sử dụng VcXsrv (có hướng dẫn ở file `schedule.md`) để thi�
 
 ---
 
-## Đóng góp & License
-
-Bạn được khuyến khích **fork** và **đóng góp** cho dự án này nếu thấy hữu ích hoặc muốn phát triển thêm.
-
-Dự án sử dụng giấy phép [MIT License](https://opensource.org/licenses/MIT):  
-Bạn có thể tự do sử dụng, sao chép, chỉnh sửa, phân phối lại hoặc tích hợp vào dự án khác, kể cả mục đích thương mại, chỉ cần giữ lại thông tin bản quyền gốc.
-
----
 
